@@ -623,4 +623,11 @@ function renderC(p, idx, c) {
 }
 
 /* ── INIT ── */
-applyFilters();
+// ── GLOBAL SCOPE'A EXPOSE ET ──
+window.filterByLeague = filterByLeague;
+window.handleSearch = handleSearch;
+window.openProfile = openProfile;
+window.goHome = goHome;
+window.switchTab = switchTab;
+window.exportPDF = exportPDF;
+window.renderTab = renderTab;
