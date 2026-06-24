@@ -41,20 +41,8 @@ function renderCards(data) {
     d.className = 'pc';
     d.onclick = () => openProfile(p);
     d.innerHTML = `
-      <div class="pc-banner" style="background:linear-gradient(135deg,${p.bannerColor},${p.bannerColor}cc)">
-        <div class="pc-banner-nickname">${p.nickname}</div>
-        <div class="pc-type-badge">${p.type === 'player' ? 'Oyuncu' : 'Teknik Direktör'}</div>
-        <div class="pc-avatar-wrap">
-          <div class="pc-avatar" style="background:${p.avatarBg};color:${p.avatarText}">
-            <i class="ti ${p.icon}" style="font-size:22px"></i>
-          </div>
-        </div>
-      </div>
-      <div class="pc-body">
-        <div class="pc-name">${p.name}</div>
-        <div class="pc-meta">${p.sub}</div>
-        <div class="pc-score"><i class="ti ti-star"></i>${p.fanScore}</div>
-      </div>`;
+      <div class="pc-cat">← ${p.type === 'player' ? 'OYUNCU' : 'TEKNİK DIREKTÖR'}</div>
+      <div class="pc-nick">${p.nickname}</div>`;
     g.appendChild(d);
   });
 }
