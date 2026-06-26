@@ -55,47 +55,141 @@ function renderApiSection(json) {
   });
 }
 
-function showApiPlayer(p) {
-  const pos   = POS_TR[p.position] || p.position || '—';
-  const age   = p.age ? `${p.age} yaş` : '—';
-  const dob   = p.dateOfBirth ? new Date(p.dateOfBirth).toLocaleDateString('tr-TR') : '—';
-
+function apiProfileShell(p) {
+  const pos = POS_TR[p.position] || p.position || '—';
+  const age = p.age ? `${p.age} yaş` : '—';
+  const dob = p.dateOfBirth ? new Date(p.dateOfBirth).toLocaleDateString('tr-TR') : '—';
   document.getElementById('homeView').classList.remove('show');
-  const pv = document.getElementById('profileView');
-  pv.classList.add('show');
+  document.getElementById('profileView').classList.add('show');
   document.getElementById('backLabel').textContent = 'Oyunculara dön';
-
   document.getElementById('scoutHero').innerHTML = `
     <div class="scout-hero-main" style="padding-bottom:28px">
       <div class="scout-avatar-col">
-        <div class="scout-avatar" style="background:#1a1a1a;font-size:42px">
+        <div class="scout-avatar" style="background:#1a1a1a;font-size:42px" id="apiAvatarBox">
           ${p.teamCrest ? `<img src="${p.teamCrest}" style="width:60px;height:60px;object-fit:contain" onerror="this.replaceWith('⚽')">` : '⚽'}
         </div>
-        <div class="scout-overall" style="font-size:11px;font-weight:800;color:#000;text-align:center;padding:4px">
-          ${pos.slice(0,3).toUpperCase()}
+        <div class="scout-overall" id="apiOverallBox" style="font-size:11px;font-weight:800;color:#000;text-align:center;padding:4px">
+          ${pos.slice(0, 3).toUpperCase()}
         </div>
       </div>
       <div class="scout-info-col">
-        <div style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">
-          ${p.league}
-        </div>
+        <div style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">${p.league}</div>
         <div class="scout-name">${p.name}</div>
-        <div class="scout-role">${p.team} · <span class="hl">${pos}</span></div>
-        <div class="scout-kpis" style="margin-top:14px">
+        <div class="scout-role" id="apiRoleBox">${p.team} · <span class="hl">${pos}</span></div>
+        <div class="scout-kpis" id="apiKpisBox" style="margin-top:14px">
           <div class="scout-kpi-pill"><i class="ti ti-flag"></i>${p.nationality || '—'}</div>
           <div class="scout-kpi-pill"><i class="ti ti-cake"></i>${age} (${dob})</div>
-          <div class="scout-kpi-pill"><i class="ti ti-shirt"></i>${p.teamShort}</div>
+          <div class="scout-kpi-pill"><i class="ti ti-shirt"></i>${p.teamShort || p.team}</div>
         </div>
       </div>
     </div>`;
-
   document.getElementById('scoutStatsBar').innerHTML = '';
   document.getElementById('scoutAiBanner').innerHTML = '';
   document.getElementById('stabs').innerHTML = '';
+}
+
+function renderApiRichProfile(p, d) {
+  // Upgrade avatar to real photo
+  if (d.photo) {
+    const box = document.getElementById('apiAvatarBox');
+    if (box) box.innerHTML = `<img src="${d.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:4px" onerror="this.replaceWith('⚽')">`;
+  }
+  // Upgrade role
+  const pos = POS_TR[d.position] || d.position || '—';
+  const roleBox = document.getElementById('apiRoleBox');
+  if (roleBox) roleBox.innerHTML = `${d.team || p.team} · <span class="hl">${pos}</span>`;
+  // Upgrade KPIs
+  const kpisBox = document.getElementById('apiKpisBox');
+  if (kpisBox) kpisBox.innerHTML = `
+    <div class="scout-kpi-pill"><i class="ti ti-flag"></i>${d.nationality || p.nationality || '—'}</div>
+    <div class="scout-kpi-pill"><i class="ti ti-cake"></i>${d.age ? d.age + ' yaş' : '—'}</div>
+    <div class="scout-kpi-pill"><i class="ti ti-ruler"></i>${d.height || '—'}</div>
+    <div class="scout-kpi-pill"><i class="ti ti-weight"></i>${d.weight || '—'}</div>`;
+
+  // Stats bar
+  const st = d.stats;
+  document.getElementById('scoutStatsBar').innerHTML = [
+    { val: st.appearances,   lbl: 'Maç'         },
+    { val: st.goals,         lbl: 'Gol'          },
+    { val: st.assists,       lbl: 'Asist'        },
+    { val: st.rating || '—', lbl: 'Puan'         },
+    { val: st.minutesPlayed, lbl: 'Dakika'       },
+    { val: st.yellowCards,   lbl: 'Sarı Kart'    },
+  ].map(i => `
+    <div class="scout-stat-item">
+      <div class="scout-stat-val" style="color:${i.lbl==='Puan'?'var(--gold)':'var(--t1)'}">${i.val}</div>
+      <div class="scout-stat-lbl">${i.lbl}</div>
+    </div>`).join('');
+
+  // Content
   document.getElementById('pcontent').innerHTML = `
-    <div class="card" style="color:var(--t3);font-size:13px;text-align:center;padding:32px">
-      Detaylı profil için oyuncuyu <strong style="color:var(--t1)">data.js</strong>'e ekle.
+    <div class="card">
+      <div class="card-head"><i class="ti ti-chart-bar"></i>Sezon İstatistikleri${d.season ? ' — ' + d.season : ''}</div>
+      ${[
+        ['Pas',           st.passes,        st.passes],
+        ['İsabetli Şut',  st.shotsOnTarget, st.shots || 1],
+        ['Dribling',      st.dribbles,      Math.max(st.dribbles, 10)],
+        ['Top Kapma',     st.tackles,       Math.max(st.tackles, 10)],
+      ].map(([lbl, val, max]) => `
+        <div class="pbar-row">
+          <div class="pbar-label">${lbl}</div>
+          <div class="pbar-track"><div class="pbar-fill" style="width:${Math.min(100,Math.round(val/max*100))}%;background:var(--gold)"></div></div>
+          <div class="pbar-val">${val}</div>
+        </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-head"><i class="ti ti-info-circle"></i>Oyuncu Bilgisi</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
+        ${[
+          ['Tam İsim',   `${d.firstname || ''} ${d.lastname || ''}`.trim() || d.name],
+          ['Milliyet',   d.nationality || '—'],
+          ['Boy',        d.height || '—'],
+          ['Kilo',       d.weight || '—'],
+          ['Lig',        d.league || p.league || '—'],
+          ['Takım',      d.team || p.team || '—'],
+          ['Yaralanma',  d.injured ? '🔴 Yaralı' : '🟢 Sağlıklı'],
+          ['Sezon',      d.season || '—'],
+        ].map(([k, v]) => `
+          <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;padding:10px 12px">
+            <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">${k}</div>
+            <div style="font-weight:600;color:var(--t1)">${v}</div>
+          </div>`).join('')}
+      </div>
     </div>`;
+}
+
+async function showApiPlayer(p) {
+  // Temel kabuğu hemen göster (blocking değil)
+  apiProfileShell(p);
+
+  document.getElementById('scoutAiBanner').innerHTML = `
+    <div style="padding:16px 28px;color:var(--t3);font-size:13px;display:flex;align-items:center;gap:10px">
+      <i class="ti ti-loader ti-spin" style="font-size:18px;color:var(--gold)"></i>
+      API-Football'dan veri çekiliyor…
+    </div>`;
+  document.getElementById('pcontent').innerHTML = '';
+
+  let detail = null;
+  try {
+    const res = await fetch(`/.netlify/functions/getPlayerDetail?name=${encodeURIComponent(p.name)}`);
+    if (res.ok) detail = await res.json();
+    else console.warn('[IDFB] getPlayerDetail:', res.status, await res.text());
+  } catch (e) {
+    console.warn('[IDFB] getPlayerDetail hatası:', e.message);
+  }
+
+  document.getElementById('scoutAiBanner').innerHTML = '';
+
+  if (!detail || detail.error) {
+    // Temel profille devam et
+    document.getElementById('pcontent').innerHTML = `
+      <div class="card" style="color:var(--t3);font-size:13px;text-align:center;padding:32px">
+        ${detail?.error ?? 'API verisi alınamadı'} — Temel profil gösteriliyor.
+      </div>`;
+    return;
+  }
+
+  renderApiRichProfile(p, detail);
 }
 
 const PAGE = document.body.dataset.page || 'home';
