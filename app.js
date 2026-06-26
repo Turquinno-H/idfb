@@ -253,8 +253,8 @@ function exportPDF() {
   window.print();
 }
 
-const P_TABS = ['Genel Bakış', 'Kariyer', 'Kimya', 'Kupa Dolabı', 'YZ Analizi', 'Dönüm Noktaları'];
-const C_TABS = ['Genel Bakış', 'Formasyon & Kariyer', 'Oyuncu Kimyası', 'Kupa Dolabı', 'YZ Analizi'];
+const P_TABS = ['Genel Bakış', 'Kariyer', 'Kimya', 'Kupa Dolabı', 'Dönüm Noktaları'];
+const C_TABS = ['Genel Bakış', 'Formasyon & Kariyer', 'Oyuncu Kimyası', 'Kupa Dolabı'];
 
 function openProfile(p) {
   currentData = p;
@@ -539,8 +539,6 @@ function renderP(p, idx, c) {
   } else if (idx === 3) {
     c.innerHTML = trophyHTML(p.trophies);
   } else if (idx === 4) {
-    c.innerHTML = aiHTML(p);
-  } else if (idx === 5) {
     c.innerHTML = msHTML(p.milestones);
   }
 }
@@ -575,8 +573,6 @@ function renderC(p, idx, c) {
     c.innerHTML = `<div class="card"><div class="card-head"><i class="ti ti-users"></i>Kimya Kurduğu Oyuncular</div><div class="chem-list">${chemHTML(p.chemistry)}</div></div>`;
   } else if (idx === 3) {
     c.innerHTML = trophyHTML(p.trophies);
-  } else if (idx === 4) {
-    c.innerHTML = aiHTML(p) + msHTML(p.milestones);
   }
 }
 
