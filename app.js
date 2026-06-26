@@ -264,13 +264,14 @@ function openProfile(p) {
 
   const hero = document.getElementById('scoutHero');
   hero.style.background = `
-    radial-gradient(ellipse 70% 90% at -8% 50%, ${p.bannerColor}22 0%, transparent 65%),
-    radial-gradient(ellipse 50% 60% at 108% -10%, ${p.bannerColor}14 0%, transparent 60%),
-    linear-gradient(160deg, #1E293B 0%, #0F172A 100%)`;
+    radial-gradient(ellipse 70% 90% at -8% 50%, rgba(245,197,24,0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 60% at 108% -10%, rgba(245,197,24,0.04) 0%, transparent 60%),
+    linear-gradient(160deg, #111 0%, #000 100%)`;
 
   const av = document.getElementById('scoutAvatar');
-  av.style.background = `linear-gradient(135deg, ${p.avatarBg}, ${p.avatarBg}cc)`;
-  av.style.color = p.avatarText;
+  av.style.background = `linear-gradient(135deg, #1a1a1a, #111)`;
+  av.style.color = '#F5C518';
+  av.style.border = '2px solid #2a2a2a';
   av.innerHTML = `<i class="ti ${p.icon}"></i>`;
 
   document.getElementById('scoutOverall').innerHTML =
@@ -425,7 +426,7 @@ function msHTML(ms) {
 
 const CHART_OPTS = {
   grid:  { color: 'rgba(255,255,255,0.06)' },
-  ticks: { color: '#64748B', font: { family: 'Inter', size: 11 } }
+  ticks: { color: '#666', font: { family: 'Inter', size: 11 } }
 };
 
 function makeChart(id, p) {
@@ -503,8 +504,8 @@ function makeRadarChart(id, p) {
             min: 0, max: 100,
             grid: { color: 'rgba(255,255,255,0.07)' },
             angleLines: { color: 'rgba(255,255,255,0.07)' },
-            ticks: { color: '#64748B', font: { family: 'Inter', size: 9 }, backdropColor: 'transparent', stepSize: 25, display: false },
-            pointLabels: { color: '#CBD5E1', font: { family: 'Inter', size: 11, weight: '600' } }
+            ticks: { color: '#555', font: { family: 'Inter', size: 9 }, backdropColor: 'transparent', stepSize: 25, display: false },
+            pointLabels: { color: '#fff', font: { family: 'Inter', size: 11, weight: '600' } }
           }
         }
       }
