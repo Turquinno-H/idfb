@@ -233,8 +233,8 @@ function renderCards(data) {
     d.className = 'pc';
     d.onclick = () => openProfile(p);
     d.innerHTML = `
-      <div class="pc-cat">← ${p.type === 'player' ? 'OYUNCU' : 'TEKNİK DIREKTÖR'}</div>
-      <div class="pc-nick">${p.nickname}</div>`;
+      <div class="pc-cat">${p.type === 'player' ? 'OYUNCU' : 'TEKNİK DIREKTÖR'}</div>
+      <div class="pc-nick">${p.name}</div>`;
     g.appendChild(d);
   });
 }

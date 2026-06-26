@@ -280,9 +280,9 @@ body {
 }
 .pc-cat::before { content:''; display:inline-block; width:6px; height:6px; background:var(--gold); border-radius:50%; }
 .pc-nick {
-  font-size:24px; font-weight:900; letter-spacing:.02em;
+  font-size:clamp(15px,2.2vw,22px); font-weight:900; letter-spacing:.02em;
   text-transform:uppercase; color:#fff;
-  line-height:1.1; word-break:break-word;
+  line-height:1.15; word-break:break-word;
   margin-top:10px;
 }
 
