@@ -9,12 +9,12 @@ export const PLAYERS = [
     stats: [{ l: 'Maç', v: 489 }, { l: 'Gol', v: 95 }, { l: 'Asist', v: 92 }, { l: 'Puan Ort.', v: '9.4' }, { l: 'Dünya Kupası', v: '1998' }],
     badges: [{ t: 'badge-type', l: 'Oyuncu' }, { t: 'badge-nat', l: '🇫🇷 Fransa' }, { t: 'badge-role', l: 'Oyun Kurucu' }],
     perfs: [
-      { label: 'Teknik', val: 99, color: '#003087' },
-      { label: 'Vizyon', val: 97, color: '#1D9E75' },
-      { label: 'Denge', val: 96, color: '#c9a84c' },
-      { label: 'Pas', val: 94, color: '#378ADD' },
-      { label: 'Liderlik', val: 95, color: '#c9a84c' },
-      { label: 'Şut', val: 88, color: '#888780' }
+      { label: 'Teknik', val: 99, color: '#F5C518' },
+      { label: 'Vizyon', val: 97, color: '#F5C518' },
+      { label: 'Denge', val: 96, color: '#F5C518' },
+      { label: 'Pas', val: 94, color: '#F5C518' },
+      { label: 'Liderlik', val: 95, color: '#F5C518' },
+      { label: 'Şut', val: 88, color: '#ffffff' }
     ],
     trophies: [
       { icon: 'ti-world', title: 'FIFA Dünya Kupası', club: 'Fransa Millî Takımı', yr: '1998' },
@@ -34,10 +34,10 @@ export const PLAYERS = [
       { yr: '2006', title: 'Son Dans', desc: 'İtalya finalinde Materazzi\'ye kafa darbesi. Kırmızı kartla kapanan efsanevi kariyer.', tag: 'Veda' }
     ],
     chemistry: [
-      { initials: 'RC', name: 'Roberto Carlos', pos: 'Sol Bek', pct: 97, bg: '#E6F1FB', tc: '#0C447C' },
-      { initials: 'LF', name: 'Luis Figo', pos: 'Sağ Kanat', pct: 95, bg: '#FAEEDA', tc: '#633806' },
-      { initials: 'TH', name: 'Thierry Henry', pos: 'Forvet (Millî)', pct: 96, bg: '#E1F5EE', tc: '#085041' },
-      { initials: 'LT', name: 'Lilian Thuram', pos: 'Sağ Bek (Millî)', pct: 92, bg: '#FBEAF0', tc: '#72243E' }
+      { initials: 'RC', name: 'Roberto Carlos', pos: 'Sol Bek', pct: 97, bg: '#111', tc: '#F5C518' },
+      { initials: 'LF', name: 'Luis Figo', pos: 'Sağ Kanat', pct: 95, bg: '#111', tc: '#F5C518' },
+      { initials: 'TH', name: 'Thierry Henry', pos: 'Forvet (Millî)', pct: 96, bg: '#111', tc: '#F5C518' },
+      { initials: 'LT', name: 'Lilian Thuram', pos: 'Sağ Bek (Millî)', pct: 92, bg: '#111', tc: '#F5C518' }
     ],
     aiStrong: 'Tüm zamanların en büyük oyun kurucularından biri. Dar alanda topla denge ve kontrol eşsiz. Sol ayak roulette tekniği futbolun DNA\'sına işledi. Büyük sahnelerde soğukkanlılık rakipsiz.',
     aiStrong_chips: ['Teknik', 'Top kontrolü', 'Oyun okuma', 'Büyük maç oyuncusu'],
@@ -45,10 +45,10 @@ export const PLAYERS = [
     aiWeak_chips: ['Temperament', 'Defans katkısı', 'Hız'],
     aiFuture: 'Teknik direktörlükte 3 Şampiyonlar Ligi kazandı (Real Madrid). Futbol tarihinin en eksiksiz kariyerlerinden birini tamamladı.',
     milestones: [
-      { icon: 'ti-world', bg: '#FAEEDA', ic: '#633806', title: 'Dünya Kupası (1998)', desc: 'Finale 2 kafa golü ile Fransa\'yı ilk kez şampiyona taşıdı.' },
-      { icon: 'ti-transfer-in', bg: '#E6F1FB', ic: '#0C447C', title: 'Real Madrid transferi (2001)', desc: '73.5M € — futbol tarihinin o dönemki rekor bonservisi.' },
-      { icon: 'ti-ball-football', bg: '#E1F5EE', ic: '#085041', title: 'UCL Volley Golü (2002)', desc: 'Tüm zamanların en güzel golü olarak tarihe geçti.' },
-      { icon: 'ti-flag', bg: '#FCEBEB', ic: '#791F1F', title: 'Kafa darbesiyle veda (2006)', desc: 'Final\'de kırmızı kartla kapanan unutulmaz kariyer sonu.' }
+      { icon: 'ti-world', bg: '#111', ic: '#F5C518', title: 'Dünya Kupası (1998)', desc: 'Finale 2 kafa golü ile Fransa\'yı ilk kez şampiyona taşıdı.' },
+      { icon: 'ti-transfer-in', bg: '#111', ic: '#F5C518', title: 'Real Madrid transferi (2001)', desc: '73.5M € — futbol tarihinin o dönemki rekor bonservisi.' },
+      { icon: 'ti-ball-football', bg: '#111', ic: '#F5C518', title: 'UCL Volley Golü (2002)', desc: 'Tüm zamanların en güzel golü olarak tarihe geçti.' },
+      { icon: 'ti-flag', bg: '#111', ic: '#fff', title: 'Kafa darbesiyle veda (2006)', desc: 'Final\'de kırmızı kartla kapanan unutulmaz kariyer sonu.' }
     ],
     seasons: [
       { yr: '1992–93', club: 'Bordeaux',     age: 20, apps: 17, goals: 2,  assists: 1,  rating: 6.8 },
@@ -96,12 +96,12 @@ export const COACHES = [
     stats: [{ l: 'Maç', v: 1108 }, { l: 'Galibiyet', v: 684 }, { l: 'Kupa', v: 26 }, { l: 'Galibiyet%', v: '62%' }, { l: 'Yaş', v: 62 }],
     badges: [{ t: 'badge-type', l: 'Teknik Direktör' }, { t: 'badge-nat', l: '🇵🇹 Portekiz' }, { t: 'badge-role', l: 'Savunma Odaklı' }],
     perfs: [
-      { label: 'Taktik', val: 97, color: '#cc0000' },
-      { label: 'Motivasyon', val: 96, color: '#c9a84c' },
-      { label: 'Büyük Maç', val: 98, color: '#1D9E75' },
-      { label: 'Kadro Yönt.', val: 88, color: '#378ADD' },
-      { label: 'Basın İlt.', val: 91, color: '#c9a84c' },
-      { label: 'Oyuncu Gel.', val: 72, color: '#888780' }
+      { label: 'Taktik', val: 97, color: '#F5C518' },
+      { label: 'Motivasyon', val: 96, color: '#F5C518' },
+      { label: 'Büyük Maç', val: 98, color: '#F5C518' },
+      { label: 'Kadro Yönt.', val: 88, color: '#F5C518' },
+      { label: 'Basın İlt.', val: 91, color: '#F5C518' },
+      { label: 'Oyuncu Gel.', val: 72, color: '#ffffff' }
     ],
     trophies: [
       { icon: 'ti-trophy', title: 'Şampiyonlar Ligi x2', club: 'Porto & Inter Milan', yr: '2004, 2010' },
@@ -119,10 +119,10 @@ export const COACHES = [
       { yr: '2025', title: 'S.L. Benfica', desc: 'Evine döndü. Lizbon\'da şampiyonluk peşinde.', tag: 'Eve Dönüş' }
     ],
     chemistry: [
-      { initials: 'AO', name: 'Orkun Kökçü', pos: 'Orta Saha', pct: 88, bg: '#FAEEDA', tc: '#633806' },
-      { initials: 'VP', name: 'Vangelis Pavlidis', pos: 'Forvet', pct: 85, bg: '#E6F1FB', tc: '#0C447C' },
-      { initials: 'NO', name: 'Nicolás Otamendi', pos: 'Stoper', pct: 82, bg: '#E1F5EE', tc: '#085041' },
-      { initials: 'FA', name: 'Fredrik Aursnes', pos: 'Orta Saha', pct: 79, bg: '#EEEDFE', tc: '#3C3489' }
+      { initials: 'AO', name: 'Orkun Kökçü', pos: 'Orta Saha', pct: 88, bg: '#111', tc: '#F5C518' },
+      { initials: 'VP', name: 'Vangelis Pavlidis', pos: 'Forvet', pct: 85, bg: '#111', tc: '#F5C518' },
+      { initials: 'NO', name: 'Nicolás Otamendi', pos: 'Stoper', pct: 82, bg: '#111', tc: '#F5C518' },
+      { initials: 'FA', name: 'Fredrik Aursnes', pos: 'Orta Saha', pct: 79, bg: '#111', tc: '#F5C518' }
     ],
     formations: [{ name: '4-2-3-1', sub: 'Birincil' }, { name: '4-4-2', sub: 'Kontra atak' }, { name: '5-3-2', sub: 'Savunma bloku' }],
     aiStrong: 'Büyük maçlarda taktiksel üstünlük kurma kabiliyeti 25 yıldır eşsiz. Psikolojik baskı yönetimi hâlâ zirvede.',
@@ -131,9 +131,9 @@ export const COACHES = [
     aiWeak_chips: ['Genç oyuncu', 'Yönetim ilişkisi'],
     aiFuture: 'Benfica ile Portekiz şampiyonluğu ve UCL yolculuğu gündemde. Kariyerini doğduğu ülkede bir kupa ile taçlandırmak istiyor.',
     milestones: [
-      { icon: 'ti-trophy', bg: '#FAEEDA', ic: '#633806', title: 'Inter treble\'ı (2010)', desc: 'UCL, Serie A ve Coppa Italia. Tarihte nadiren tekrar edilen başarı.' },
-      { icon: 'ti-microphone', bg: '#E6F1FB', ic: '#0C447C', title: '"The Special One" (2004)', desc: 'Modern futbolun en ikonik basın toplantısı.' },
-      { icon: 'ti-flag', bg: '#FCEBEB', ic: '#791F1F', title: 'Benfica dönemi (2025)', desc: 'Eve döndü. Portekiz\'de şampiyonluk peşinde.' }
+      { icon: 'ti-trophy', bg: '#111', ic: '#F5C518', title: 'Inter treble\'ı (2010)', desc: 'UCL, Serie A ve Coppa Italia. Tarihte nadiren tekrar edilen başarı.' },
+      { icon: 'ti-microphone', bg: '#111', ic: '#F5C518', title: '"The Special One" (2004)', desc: 'Modern futbolun en ikonik basın toplantısı.' },
+      { icon: 'ti-flag', bg: '#111', ic: '#fff', title: 'Benfica dönemi (2025)', desc: 'Eve döndü. Portekiz\'de şampiyonluk peşinde.' }
     ]
   },
   {
@@ -146,12 +146,12 @@ export const COACHES = [
     stats: [{ l: 'Maç', v: 1152 }, { l: 'Galibiyet', v: 706 }, { l: 'UCL', v: 5 }, { l: 'Galibiyet%', v: '61%' }, { l: 'Yaş', v: 65 }],
     badges: [{ t: 'badge-type', l: 'Teknik Direktör' }, { t: 'badge-nat', l: '🇮🇹 İtalya' }, { t: 'badge-role', l: 'Oyuncu Odaklı' }],
     perfs: [
-      { label: 'Kadro Yönt.', val: 99, color: '#009c3b' },
-      { label: 'UCL Deneyimi', val: 99, color: '#1D9E75' },
-      { label: 'Oyuncu Gel.', val: 95, color: '#185FA5' },
-      { label: 'Uyum', val: 96, color: '#c9a84c' },
-      { label: 'Taktik', val: 90, color: '#993556' },
-      { label: 'Motivasyon', val: 93, color: '#c9a84c' }
+      { label: 'Kadro Yönt.', val: 99, color: '#F5C518' },
+      { label: 'UCL Deneyimi', val: 99, color: '#F5C518' },
+      { label: 'Oyuncu Gel.', val: 95, color: '#F5C518' },
+      { label: 'Uyum', val: 96, color: '#F5C518' },
+      { label: 'Taktik', val: 90, color: '#F5C518' },
+      { label: 'Motivasyon', val: 93, color: '#ffffff' }
     ],
     trophies: [
       { icon: 'ti-trophy', title: 'Şampiyonlar Ligi x5', club: 'Milan & Real Madrid', yr: '2003,14,22,24,25' },
@@ -169,10 +169,10 @@ export const COACHES = [
       { yr: '2025', title: 'Brezilya Milli Takımı', desc: 'Seleção\'nun başına geçti. Dünya Kupası hedefi.', tag: 'Seleção' }
     ],
     chemistry: [
-      { initials: 'VM', name: 'Vinicius Jr.', pos: 'Kanat', pct: 97, bg: '#FAEEDA', tc: '#633806' },
-      { initials: 'RO', name: 'Rodrygo', pos: 'Kanat', pct: 93, bg: '#E6F1FB', tc: '#0C447C' },
-      { initials: 'EN', name: 'Endrick', pos: 'Forvet', pct: 89, bg: '#E1F5EE', tc: '#085041' },
-      { initials: 'RV', name: 'Raphaël Veiga', pos: 'Orta Saha', pct: 84, bg: '#EEEDFE', tc: '#3C3489' }
+      { initials: 'VM', name: 'Vinicius Jr.', pos: 'Kanat', pct: 97, bg: '#111', tc: '#F5C518' },
+      { initials: 'RO', name: 'Rodrygo', pos: 'Kanat', pct: 93, bg: '#111', tc: '#F5C518' },
+      { initials: 'EN', name: 'Endrick', pos: 'Forvet', pct: 89, bg: '#111', tc: '#F5C518' },
+      { initials: 'RV', name: 'Raphaël Veiga', pos: 'Orta Saha', pct: 84, bg: '#111', tc: '#F5C518' }
     ],
     formations: [{ name: '4-3-3', sub: 'Standart' }, { name: '4-2-3-1', sub: 'Büyük maç' }, { name: '4-4-2', sub: 'Savunma' }],
     aiStrong: 'Yıldız yönetimindeki empati eşsiz. UCL deneyimi 25 yılda birikmiş. Oyuncuların en iyi versiyonunu çıkarıyor.',
@@ -181,9 +181,9 @@ export const COACHES = [
     aiWeak_chips: ['Pressing savunması', 'Taktik esneklik'],
     aiFuture: 'Brezilya Dünya Kupası 2026 ile kariyerini taçlandırma ihtimali yüksek. Futbol tarihinin en büyük koçu unvanını pekiştirebilir.',
     milestones: [
-      { icon: 'ti-trophy', bg: '#FAEEDA', ic: '#633806', title: 'La Decima (2014)', desc: 'Real Madrid\'e 12 yıllık hasreti bitirdi.' },
-      { icon: 'ti-crown', bg: '#E1F5EE', ic: '#085041', title: '5. UCL (2025)', desc: 'Tarihte ilk kez 5 kez Şampiyonlar Ligi kazanan teknik direktör.' },
-      { icon: 'ti-flag', bg: '#E6F1FB', ic: '#0C447C', title: 'Seleção görevi (2025)', desc: 'Dünya Kupası 2026 için Brezilya\'nın başında.' }
+      { icon: 'ti-trophy', bg: '#111', ic: '#F5C518', title: 'La Decima (2014)', desc: 'Real Madrid\'e 12 yıllık hasreti bitirdi.' },
+      { icon: 'ti-crown', bg: '#111', ic: '#F5C518', title: '5. UCL (2025)', desc: 'Tarihte ilk kez 5 kez Şampiyonlar Ligi kazanan teknik direktör.' },
+      { icon: 'ti-flag', bg: '#111', ic: '#fff', title: 'Seleção görevi (2025)', desc: 'Dünya Kupası 2026 için Brezilya\'nın başında.' }
     ]
   }
 ];

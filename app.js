@@ -294,7 +294,7 @@ function openProfile(p) {
 
   document.getElementById('scoutFanCard').innerHTML =
     `<div class="scout-fan-label">Taraftar Puanı</div>
-     <div class="scout-fan-num" style="color:${p.bannerColor}">${p.fanScore}</div>`;
+     <div class="scout-fan-num" style="color:#F5C518">${p.fanScore}</div>`;
 
   document.getElementById('scoutStatsBar').innerHTML =
     p.stats.map(s => `
@@ -362,7 +362,7 @@ function tlHTML(arr) {
 function chemHTML(ch) {
   return ch.map(c => `
     <div class="chem-row">
-      <div class="chem-init" style="background:${c.bg};color:${c.tc}">${c.initials}</div>
+      <div class="chem-init" style="background:#111;color:#F5C518;border:1px solid #333">${c.initials}</div>
       <div class="chem-info">
         <div class="chem-name">${c.name}</div>
         <div class="chem-pos">${c.pos}</div>
@@ -390,19 +390,19 @@ function trophyHTML(arr) {
 function aiHTML(p) {
   return `<div class="card">
     <div class="card-head"><i class="ti ti-brain"></i>Yapay Zekâ Analizi</div>
-    <div class="ai-block" style="background:rgba(52,211,153,0.08)">
-      <div class="ai-label" style="color:#34D399"><i class="ti ti-thumb-up"></i>Güçlü Yönler</div>
-      <div class="ai-text" style="color:#94A3B8">${p.aiStrong}</div>
-      <div class="ai-chips">${p.aiStrong_chips.map(x => `<span class="ai-chip" style="background:rgba(52,211,153,0.12);color:#34D399">${x}</span>`).join('')}</div>
+    <div class="ai-block" style="background:rgba(245,197,24,0.06);border:1px solid rgba(245,197,24,0.15)">
+      <div class="ai-label" style="color:#F5C518"><i class="ti ti-thumb-up"></i>Güçlü Yönler</div>
+      <div class="ai-text" style="color:#ccc">${p.aiStrong}</div>
+      <div class="ai-chips">${p.aiStrong_chips.map(x => `<span class="ai-chip" style="background:rgba(245,197,24,0.12);color:#F5C518">${x}</span>`).join('')}</div>
     </div>
-    <div class="ai-block" style="background:rgba(239,68,68,0.08)">
-      <div class="ai-label" style="color:#FC8181"><i class="ti ti-alert-triangle"></i>Geliştirilebilir Yönler</div>
-      <div class="ai-text" style="color:#94A3B8">${p.aiWeak}</div>
-      <div class="ai-chips">${p.aiWeak_chips.map(x => `<span class="ai-chip" style="background:rgba(239,68,68,0.12);color:#FC8181">${x}</span>`).join('')}</div>
+    <div class="ai-block" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1)">
+      <div class="ai-label" style="color:#fff"><i class="ti ti-alert-triangle"></i>Geliştirilebilir Yönler</div>
+      <div class="ai-text" style="color:#aaa">${p.aiWeak}</div>
+      <div class="ai-chips">${p.aiWeak_chips.map(x => `<span class="ai-chip" style="background:rgba(255,255,255,0.08);color:#fff">${x}</span>`).join('')}</div>
     </div>
-    <div class="ai-block" style="background:rgba(99,102,241,0.08)">
-      <div class="ai-label" style="color:#A5B4FC"><i class="ti ti-telescope"></i>Gelecek Tahmini</div>
-      <div class="ai-text" style="color:#94A3B8">${p.aiFuture}</div>
+    <div class="ai-block" style="background:rgba(245,197,24,0.03);border:1px solid rgba(245,197,24,0.08)">
+      <div class="ai-label" style="color:#F5C518"><i class="ti ti-telescope"></i>Gelecek Tahmini</div>
+      <div class="ai-text" style="color:#aaa">${p.aiFuture}</div>
     </div>
   </div>`;
 }
@@ -413,7 +413,7 @@ function msHTML(ms) {
     <div class="ms-list">
       ${ms.map(m => `
         <div class="ms-item">
-          <div class="ms-icon" style="background:${m.bg}"><i class="ti ${m.icon}" style="color:${m.ic};font-size:17px"></i></div>
+          <div class="ms-icon" style="background:#111;border:1px solid #2a2a2a"><i class="ti ${m.icon}" style="color:#F5C518;font-size:17px"></i></div>
           <div>
             <div class="ms-title">${m.title}</div>
             <div class="ms-desc">${m.desc}</div>
@@ -439,8 +439,8 @@ function makeChart(id, p) {
           labels: ['Ağu', 'Eyl', 'Eki', 'Kas', 'Ara', 'Oca', 'Şub', 'Mar'],
           datasets: [{
             label: 'Puan', data: [6.8, 7.2, 7.8, 8.1, 7.5, 8.4, 8.7, 9.1],
-            borderColor: p.bannerColor, backgroundColor: p.bannerColor + '22',
-            tension: 0.4, fill: true, pointBackgroundColor: p.bannerColor, pointRadius: 4, borderWidth: 2
+            borderColor: '#F5C518', backgroundColor: 'rgba(245,197,24,0.1)',
+            tension: 0.4, fill: true, pointBackgroundColor: '#F5C518', pointRadius: 4, borderWidth: 2
           }]
         },
         options: {
@@ -457,7 +457,7 @@ function makeChart(id, p) {
         type: 'bar',
         data: {
           labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-          datasets: [{ label: 'Galibiyet', data: [28, 31, 24, 35, 38, 41, 33], backgroundColor: p.bannerColor + 'cc', borderRadius: 6 }]
+          datasets: [{ label: 'Galibiyet', data: [28, 31, 24, 35, 38, 41, 33], backgroundColor: '#F5C518cc', borderRadius: 6 }]
         },
         options: {
           responsive: true, maintainAspectRatio: false,
@@ -484,11 +484,11 @@ function makeRadarChart(id, p) {
         datasets: [{
           label: 'Performans',
           data: p.perfs.map(r => r.val),
-          borderColor: p.bannerColor,
-          backgroundColor: p.bannerColor + '28',
+          borderColor: '#F5C518',
+          backgroundColor: 'rgba(245,197,24,0.15)',
           borderWidth: 2.5,
-          pointBackgroundColor: p.bannerColor,
-          pointBorderColor: '#0F172A',
+          pointBackgroundColor: '#F5C518',
+          pointBorderColor: '#000',
           pointBorderWidth: 2,
           pointRadius: 5,
           pointHoverRadius: 7
@@ -584,7 +584,7 @@ function renderSeasonPerf(p, c) {
       labels,
       datasets: [
         { label: 'Gol', data: goals,   backgroundColor: '#F5C518cc', borderRadius: 4 },
-        { label: 'Asist', data: assists, backgroundColor: '#003087aa', borderRadius: 4 }
+        { label: 'Asist', data: assists, backgroundColor: 'rgba(255,255,255,0.45)', borderRadius: 4 }
       ]
     },
     options: {
@@ -631,7 +631,7 @@ function renderNationalTeam(p, c) {
       <div class="nt-kpis">
         <div class="nt-kpi"><div class="nt-kpi-val">${nt.caps ?? '—'}</div><div class="nt-kpi-lbl">Kap</div></div>
         <div class="nt-kpi"><div class="nt-kpi-val" style="color:#F5C518">${nt.goals ?? '—'}</div><div class="nt-kpi-lbl">Gol</div></div>
-        <div class="nt-kpi"><div class="nt-kpi-val" style="color:#003087">${nt.assists ?? '—'}</div><div class="nt-kpi-lbl">Asist</div></div>
+        <div class="nt-kpi"><div class="nt-kpi-val" style="color:#fff">${nt.assists ?? '—'}</div><div class="nt-kpi-lbl">Asist</div></div>
         <div class="nt-kpi"><div class="nt-kpi-val">${ratio}</div><div class="nt-kpi-lbl">Gol/Maç</div></div>
         <div class="nt-kpi"><div class="nt-kpi-val">${nt.debut ?? '—'}</div><div class="nt-kpi-lbl">İlk Maç</div></div>
         <div class="nt-kpi"><div class="nt-kpi-val">${nt.lastMatch ?? '—'}</div><div class="nt-kpi-lbl">Son Maç</div></div>
