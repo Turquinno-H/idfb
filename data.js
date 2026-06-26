@@ -332,6 +332,58 @@ export const PLAYERS = [
       { icon: 'ti-flag', bg: '#E6F1FB', ic: '#0C447C', title: 'EURO 2024 kadrosu', desc: 'Türkiye milli takımının vazgeçilmez sağ beği.' },
       { icon: 'ti-rocket', bg: '#E1F5EE', ic: '#085041', title: 'Atalanta transferi (2024)', desc: 'Avrupa kupaları sahnesine büyük adım.' }
     ]
+  },
+  {
+    id: 'zidane', type: 'player',
+    name: 'Zinedine Zidane', nickname: 'Zizou', nicknameEn: 'The Magician',
+    sub: 'Real Madrid · #5 (Efsane)', nat: 'Fransa', role: 'Oyun Kurucu / Orta Saha', league: 'La Liga',
+    icon: 'ti-crown',
+    bannerColor: '#003087', avatarBg: '#003087', avatarText: '#ffffff',
+    fanScore: 9.8, overall: 98, marketValue: 'Efsane',
+    stats: [{ l: 'Maç', v: 489 }, { l: 'Gol', v: 95 }, { l: 'Asist', v: 92 }, { l: 'Puan Ort.', v: '9.4' }, { l: 'Dünya Kupası', v: '1998' }],
+    badges: [{ t: 'badge-type', l: 'Oyuncu' }, { t: 'badge-nat', l: '🇫🇷 Fransa' }, { t: 'badge-role', l: 'Oyun Kurucu' }],
+    perfs: [
+      { label: 'Teknik', val: 99, color: '#003087' },
+      { label: 'Vizyon', val: 97, color: '#1D9E75' },
+      { label: 'Denge', val: 96, color: '#c9a84c' },
+      { label: 'Pas', val: 94, color: '#378ADD' },
+      { label: 'Liderlik', val: 95, color: '#c9a84c' },
+      { label: 'Şut', val: 88, color: '#888780' }
+    ],
+    trophies: [
+      { icon: 'ti-world', title: 'FIFA Dünya Kupası', club: 'Fransa Millî Takımı', yr: '1998' },
+      { icon: 'ti-star', title: 'UEFA Avrupa Şampiyonası', club: 'Fransa Millî Takımı', yr: '2000' },
+      { icon: 'ti-trophy', title: 'UEFA Şampiyonlar Ligi', club: 'Real Madrid', yr: '2002' },
+      { icon: 'ti-medal', title: 'Ballon d\'Or', club: 'FIFA', yr: '1998' },
+      { icon: 'ti-award', title: 'La Liga (2x)', club: 'Real Madrid', yr: '2001–03' },
+      { icon: 'ti-trophy', title: 'Serie A (2x)', club: 'Juventus', yr: '1997–98' }
+    ],
+    timeline: [
+      { yr: '1989', title: 'Cannes Altyapısı', desc: 'Marsilya\'nın varoşlarından futbol rüyası. Cannes akademisinin erken parlayan yıldızı.', tag: 'İlk Adım' },
+      { yr: '1992', title: 'Girondins de Bordeaux', desc: 'Ligue 1\'de ilk büyük sıçrama. Fransız futboluna damgasını vurdu.', tag: 'Yükseliş' },
+      { yr: '1996', title: 'Juventus Transferi', desc: '23M € ile Serie A\'ya geçiş. İtalya\'nın en iyileriyle rekabet etti.', tag: 'İtalya' },
+      { yr: '1998', title: 'Dünya Kupası Efsanesi', desc: 'Finale 2 kafa golü. Fransa\'yı ilk kez şampiyona taşıdı. Ballon d\'Or kazandı.', tag: 'Dünya Şampiyonu' },
+      { yr: '2001', title: 'Real Madrid Transferi', desc: '73.5M € — dönemin rekor bonservisi. Galaktikolar\'ın kalbi.', tag: 'Tarihi Transfer' },
+      { yr: '2002', title: 'UCL Volley Golü', desc: 'Leverkusen\'e karşı yarı volley — tüm zamanların en güzel golü.', tag: 'Şampiyonlar Ligi' },
+      { yr: '2006', title: 'Son Dans', desc: 'İtalya finalinde Materazzi\'ye kafa darbesi. Kırmızı kartla kapanan efsanevi kariyer.', tag: 'Veda' }
+    ],
+    chemistry: [
+      { initials: 'RC', name: 'Roberto Carlos', pos: 'Sol Bek', pct: 97, bg: '#E6F1FB', tc: '#0C447C' },
+      { initials: 'LF', name: 'Luis Figo', pos: 'Sağ Kanat', pct: 95, bg: '#FAEEDA', tc: '#633806' },
+      { initials: 'TH', name: 'Thierry Henry', pos: 'Forvet (Millî)', pct: 96, bg: '#E1F5EE', tc: '#085041' },
+      { initials: 'LT', name: 'Lilian Thuram', pos: 'Sağ Bek (Millî)', pct: 92, bg: '#FBEAF0', tc: '#72243E' }
+    ],
+    aiStrong: 'Tüm zamanların en büyük oyun kurucularından biri. Dar alanda topla denge ve kontrol eşsiz. Sol ayak roulette tekniği futbolun DNA\'sına işledi. Büyük sahnelerde soğukkanlılık rakipsiz.',
+    aiStrong_chips: ['Teknik', 'Top kontrolü', 'Oyun okuma', 'Büyük maç oyuncusu'],
+    aiWeak: 'Temperament sorunu: baskı altında patlama riski. Defansif katkı minimum. Sprint hızı elit standartta değil.',
+    aiWeak_chips: ['Temperament', 'Defans katkısı', 'Hız'],
+    aiFuture: 'Teknik direktörlükte 3 Şampiyonlar Ligi kazandı (Real Madrid). Futbol tarihinin en eksiksiz kariyerlerinden birini tamamladı.',
+    milestones: [
+      { icon: 'ti-world', bg: '#FAEEDA', ic: '#633806', title: 'Dünya Kupası (1998)', desc: 'Finale 2 kafa golü ile Fransa\'yı ilk kez şampiyona taşıdı.' },
+      { icon: 'ti-transfer-in', bg: '#E6F1FB', ic: '#0C447C', title: 'Real Madrid transferi (2001)', desc: '73.5M € — futbol tarihinin o dönemki rekor bonservisi.' },
+      { icon: 'ti-ball-football', bg: '#E1F5EE', ic: '#085041', title: 'UCL Volley Golü (2002)', desc: 'Tüm zamanların en güzel golü olarak tarihe geçti.' },
+      { icon: 'ti-flag', bg: '#FCEBEB', ic: '#791F1F', title: 'Kafa darbesiyle veda (2006)', desc: 'Final\'de kırmızı kartla kapanan unutulmaz kariyer sonu.' }
+    ]
   }
 ];
 
