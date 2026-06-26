@@ -526,12 +526,8 @@ function renderP(p, idx, c) {
           ${bars(p.perfs)}
         </div>
       </div>
-      <div class="card">
-        <div class="card-head"><i class="ti ti-chart-line"></i>Sezon Grafiği</div>
-        <div style="position:relative;width:100%;height:190px"><canvas id="pc"></canvas></div>
-      </div>`;
+`;
     makeRadarChart('radarChart', p);
-    makeChart('pc', p);
   } else if (idx === 1) {
     c.innerHTML = `<div class="card"><div class="card-head"><i class="ti ti-timeline"></i>Kariyer Zaman Çizelgesi</div><div class="tl">${tlHTML(p.timeline)}</div></div>`;
   } else if (idx === 2) {
