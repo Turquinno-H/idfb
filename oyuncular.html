@@ -1,104 +1,360 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Oyuncular — IDFB</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futbol Oyuncuları - IDFB</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 4px;
+            margin-bottom: 32px;
+        }
+        .topbar a {
+            color: #F5C518;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: .06em;
+        }
+        .topbar a:hover { text-decoration: underline; }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        .header { text-align: center; color: white; margin-bottom: 40px; }
+        .header h1 { font-size: 2.2rem; margin-bottom: 8px; color: #F5C518; }
+        .status { font-size: 0.9rem; color: #666; }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border: 2px solid #F5C518;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 700;
+            background: #F5C518;
+            color: #000;
+            transition: all 0.2s;
+            letter-spacing: .04em;
+        }
+        .btn:hover { background: #d4a800; border-color: #d4a800; transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .search-box {
+            width: 100%;
+            max-width: 380px;
+            padding: 10px 18px;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            background: #111;
+            color: #fff;
+        }
+        .search-box:focus { outline: none; border-color: #F5C518; }
+        .search-box::placeholder { color: #555; }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .player-card {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: border-color .18s, transform .18s, box-shadow .18s;
+            cursor: default;
+        }
+        .player-card:hover {
+            border-color: #F5C518;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.7);
+        }
+
+        .player-image {
+            width: 100%;
+            height: 220px;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .player-image img { width: 100%; height: 100%; object-fit: cover; }
+        .player-image .no-photo { color: #444; font-size: 48px; }
+
+        .player-info { padding: 16px; }
+
+        .player-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+            letter-spacing: .02em;
+        }
+
+        .player-position {
+            color: #F5C518;
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 0.82rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .player-details { font-size: 0.82rem; color: #aaa; }
+        .player-details div {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #1e1e1e;
+        }
+        .player-details div:last-child { border-bottom: none; }
+        .label { font-weight: 600; color: #666; }
+
+        .message {
+            padding: 12px 18px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .success { background: rgba(81,207,102,0.12); color: #51cf66; border: 1px solid rgba(81,207,102,0.25); }
+        .error   { background: rgba(255,107,107,0.12); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.25); }
+        .info    { background: rgba(245,197,24,0.1);   color: #F5C518;  border: 1px solid rgba(245,197,24,0.2); }
+
+        .spinner {
+            display: inline-block;
+            width: 32px; height: 32px;
+            border: 3px solid #222;
+            border-top: 3px solid #F5C518;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #444;
+        }
+        .empty-state h2 { font-size: 1.4rem; margin-bottom: 8px; }
+
+        @media (max-width: 768px) {
+            .players-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+            .header h1 { font-size: 1.6rem; }
+            .player-image { height: 160px; }
+        }
+    </style>
 </head>
-<body data-page="players">
-  <h2 class="sr-only">IDFB – Oyuncular</h2>
-  <div class="app">
+<body>
+<div class="container">
 
-    <!-- ── NAV ── -->
-    <nav class="topnav">
-      <div class="logo-mark" onclick="window.location.href='index.html'" style="cursor:pointer">
-        <i class="ti ti-ball-football"></i>
-      </div>
-      <div class="logo-wrap" onclick="window.location.href='index.html'" style="cursor:pointer">
-        <div class="logo-text"><em>IDFB</em></div>
-        <div class="logo-sub">International Database of Football</div>
-      </div>
-      <div class="search-area">
-        <i class="ti ti-search"></i>
-        <input type="text" placeholder="Oyuncu ara…" oninput="handleSearch(this.value)" />
-      </div>
-      <div class="nav-pills">
-        <div class="npill on">Oyuncular</div>
-        <div class="npill" onclick="window.location.href='teknik-direktorler.html'">Teknik Direktörler</div>
-      </div>
-    </nav>
+    <div class="topbar">
+        <a href="index.html">← Ana Sayfa</a>
+    </div>
 
-    <!-- ── PLAYERS VIEW ── -->
-    <div class="home-view show" id="homeView">
+    <div class="header">
+        <h1>⚽ Futbol Oyuncuları</h1>
+        <div class="status" id="status">Yükleniyor…</div>
+    </div>
 
-      <!-- Page Hero -->
-      <div class="page-hero">
-        <div class="page-hero-inner">
-          <a class="page-back-link" href="index.html"><i class="ti ti-arrow-left"></i>Ana Sayfa</a>
-          <div class="page-hero-title"><em>Oyuncular</em></div>
-          <div class="page-hero-sub">Dünya genelindeki futbolcuları keşfet, kariyerlerini incele ve yapay zekâ analizlerine ulaş.</div>
-        </div>
-      </div>
+    <div class="controls">
+        <button class="btn" id="updateBtn">🔄 Güncelle</button>
+        <input type="text" class="search-box" id="searchBox" placeholder="Oyuncu adı veya pozisyon ara…">
+    </div>
 
-      <!-- Card Grid (static) -->
-      <div class="main-section">
-        <div class="sec-label">Öne Çıkan Oyuncular</div>
-        <div class="card-grid" id="cardGrid"></div>
-      </div>
+    <div id="message"></div>
+    <div id="playersContainer" class="players-grid"></div>
 
-      <!-- Live API Section -->
-      <div class="main-section" id="apiSection" style="padding-top:0"></div>
+</div>
 
-    </div><!-- /home-view -->
+<script>
+    // ===== KONFİGÜRASYON =====
+    const SUPABASE_URL      = 'https://rstiarbdejdvblgxqvus.supabase.co';
+    const SUPABASE_KEY      = 'YOUR_SUPABASE_ANON_KEY';   // Supabase → Settings → API → anon public
+    const API_FOOTBALL_KEY  = 'YOUR_RAPIDAPI_KEY';         // rapidapi.com → api-football
+    const TEAM_ID           = 52;                          // 52 = Fenerbahçe
 
-    <!-- ── PROFILE VIEW ── -->
-    <div class="profile-view" id="profileView">
+    // ===== STATE =====
+    let allPlayers = [];
 
-      <div class="back-btn" onclick="goHome()">
-        <i class="ti ti-arrow-left"></i>
-        <span id="backLabel">Oyunculara dön</span>
-      </div>
+    const container  = document.getElementById('playersContainer');
+    const updateBtn  = document.getElementById('updateBtn');
+    const searchBox  = document.getElementById('searchBox');
+    const messageDiv = document.getElementById('message');
+    const statusDiv  = document.getElementById('status');
 
-      <!-- Scout Hero -->
-      <div class="scout-hero" id="scoutHero">
-        <div class="scout-hero-main">
-          <div class="scout-avatar-col">
-            <div class="scout-avatar" id="scoutAvatar"></div>
-            <div class="scout-overall" id="scoutOverall"></div>
-          </div>
-          <div class="scout-info-col">
-            <div class="scout-top-badges" id="scoutTopBadges"></div>
-            <div class="scout-name" id="scoutName"></div>
-            <div class="scout-role" id="scoutRole"></div>
-            <div class="scout-kpis" id="scoutKpis"></div>
-          </div>
-          <div class="scout-right-col">
-            <div class="scout-value-card" id="scoutValueCard"></div>
-            <div class="scout-fan-card" id="scoutFanCard"></div>
-            <button class="scout-pdf-btn" onclick="exportPDF()">
-              <i class="ti ti-file-type-pdf"></i>Scout Raporu
-            </button>
-          </div>
-        </div>
-        <div class="scout-stats-bar" id="scoutStatsBar"></div>
-      </div>
+    // ===== BAŞLAT =====
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPlayers();
+        updateBtn.addEventListener('click', updatePlayers);
+        searchBox.addEventListener('input', e => {
+            const q = e.target.value.toLowerCase();
+            renderPlayers(allPlayers.filter(p =>
+                p.ad?.toLowerCase().includes(q) ||
+                p.pozisyon?.toLowerCase().includes(q)
+            ));
+        });
+    });
 
-      <!-- AI Scout Summary -->
-      <div class="scout-ai-banner" id="scoutAiBanner"></div>
+    // ===== SUPABASE'TEN YÜKLEMESİ =====
+    async function loadPlayers() {
+        showLoading();
+        try {
+            const res = await fetch(
+                `${SUPABASE_URL}/rest/v1/oyuncular?order=ad.asc`,
+                { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+            );
+            if (!res.ok) throw new Error(`Supabase ${res.status}`);
+            allPlayers = await res.json();
+            renderPlayers(allPlayers);
+            statusDiv.textContent = `${allPlayers.length} oyuncu`;
+            if (allPlayers.length === 0) showMsg('Veritabanı boş — Güncelle butonuna bas.', 'info');
+        } catch (err) {
+            console.error(err);
+            showMsg('❌ Yükleme hatası: ' + err.message, 'error');
+            statusDiv.textContent = 'Hata';
+        }
+    }
 
-      <div class="stabs" id="stabs"></div>
-      <div class="pcontent" id="pcontent"></div>
+    // ===== API-FOOTBALL'DAN GÜNCELLEME =====
+    async function updatePlayers() {
+        updateBtn.disabled = true;
+        showLoading();
+        showMsg('API\'den oyuncular çekiliyor…', 'info');
+        try {
+            const apiRes = await fetch(
+                `https://api-football-v1.p.rapidapi.com/v3/players?team=${TEAM_ID}&season=2024`,
+                {
+                    headers: {
+                        'x-rapidapi-key':  API_FOOTBALL_KEY,
+                        'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
+                    }
+                }
+            );
+            if (!apiRes.ok) throw new Error(`API-Football ${apiRes.status}`);
+            const apiData = await apiRes.json();
+            const players = apiData.response || [];
+            if (!players.length) throw new Error('API\'den oyuncu verisi gelmedi');
 
-    </div><!-- /profile-view -->
+            let saved = 0;
+            for (const item of players) {
+                const p = item.player;
+                const st = item.statistics?.[0] ?? {};
+                const row = {
+                    api_id:        p.id,
+                    ad:            p.name,
+                    pozisyon:      st.games?.position     || 'Bilinmiyor',
+                    takim:         st.team?.name          || '',
+                    forma_numarasi: st.games?.number      || 0,
+                    yas:           p.age                  || 0,
+                    boy:           p.height ? parseInt(p.height) : 0,
+                    kilo:          p.weight ? parseInt(p.weight) : 0,
+                    milliyet:      p.nationality          || '',
+                    foto_url:      p.photo                || '',
+                    updated_at:    new Date().toISOString()
+                };
 
-  </div><!-- /app -->
+                // Upsert: varsa güncelle, yoksa ekle
+                await fetch(
+                    `${SUPABASE_URL}/rest/v1/oyuncular`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'apikey':          SUPABASE_KEY,
+                            'Authorization':   `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type':    'application/json',
+                            'Prefer':          'resolution=merge-duplicates'
+                        },
+                        body: JSON.stringify(row)
+                    }
+                );
+                saved++;
+            }
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-  <script type="module" src="/app.js"></script>
+            await loadPlayers();
+            showMsg(`✅ ${saved} oyuncu güncellendi!`, 'success');
+            statusDiv.textContent = `Son güncelleme: ${new Date().toLocaleTimeString('tr-TR')}`;
+        } catch (err) {
+            console.error(err);
+            showMsg('❌ Güncelleme başarısız: ' + err.message, 'error');
+        } finally {
+            updateBtn.disabled = false;
+        }
+    }
+
+    // ===== RENDER =====
+    function renderPlayers(players) {
+        if (!players.length) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h2>Oyuncu bulunamadı</h2>
+                    <p>"Güncelle" butonuna tıklayın</p>
+                </div>`;
+            return;
+        }
+        container.innerHTML = '';
+        players.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'player-card';
+            card.innerHTML = `
+                <div class="player-image">
+                    ${p.foto_url
+                        ? `<img src="${p.foto_url}" alt="${p.ad}" loading="lazy" onerror="this.parentElement.innerHTML='<span class=no-photo>👤</span>'">`
+                        : `<span class="no-photo">👤</span>`}
+                </div>
+                <div class="player-info">
+                    <div class="player-name">${p.ad}</div>
+                    <div class="player-position">${p.pozisyon}${p.forma_numarasi ? ' · #' + p.forma_numarasi : ''}</div>
+                    <div class="player-details">
+                        <div><span class="label">Takım</span><span>${p.takim || '—'}</span></div>
+                        <div><span class="label">Yaş</span><span>${p.yas || '—'}</span></div>
+                        <div><span class="label">Boy</span><span>${p.boy > 0 ? p.boy + ' cm' : '—'}</span></div>
+                        <div><span class="label">Kilo</span><span>${p.kilo > 0 ? p.kilo + ' kg' : '—'}</span></div>
+                        <div><span class="label">Milliyet</span><span>${p.milliyet || '—'}</span></div>
+                    </div>
+                </div>`;
+            container.appendChild(card);
+        });
+    }
+
+    function showLoading() {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="spinner"></div>
+                <p style="margin-top:16px;color:#555">Yükleniyor…</p>
+            </div>`;
+    }
+
+    function showMsg(text, type = 'info') {
+        messageDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
+        setTimeout(() => { messageDiv.innerHTML = ''; }, 5000);
+    }
+</script>
 </body>
 </html>
