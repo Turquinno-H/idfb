@@ -19,6 +19,8 @@ import { InventoryModule } from './inventory/inventory.module';
 import { PurchasingModule } from './purchasing/purchasing.module';
 import { SalesModule } from './sales/sales.module';
 import { FinanceModule } from './finance/finance.module';
+import { AccountingModule } from './accounting/accounting.module';
+import { HrModule } from './hr/hr.module';
 
 @Module({
   imports: [
@@ -46,6 +48,8 @@ import { FinanceModule } from './finance/finance.module';
     PurchasingModule,
     SalesModule,
     FinanceModule,
+    AccountingModule,
+    HrModule,
   ],
 })
 export class BusinessModule {}
