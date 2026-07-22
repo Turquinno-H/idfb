@@ -1,0 +1,11 @@
+{
+  "name": "@idfb/config",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "files": [
+    "eslint-preset.js",
+    "prettier-preset.js",
+    "tsconfig.*.json"
+  ]
+}
