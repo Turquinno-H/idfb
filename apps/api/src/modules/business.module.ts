@@ -18,6 +18,7 @@ import { WarehousesModule } from './warehouses/warehouses.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { PurchasingModule } from './purchasing/purchasing.module';
 import { SalesModule } from './sales/sales.module';
+import { FinanceModule } from './finance/finance.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { SalesModule } from './sales/sales.module';
     InventoryModule,
     PurchasingModule,
     SalesModule,
+    FinanceModule,
   ],
 })
 export class BusinessModule {}
