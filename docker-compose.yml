@@ -59,24 +59,9 @@ services:
       - '1025:1025'
       - '8025:8025'
 
-  # One-shot job: applies database migrations and seeds base data
-  # (currencies, permissions, system roles) before the API starts.
-  migrate:
-    build:
-      context: .
-      dockerfile: apps/api/Dockerfile
-      target: build
-    container_name: idfb-migrate
-    restart: 'no'
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/idfb_erp?schema=public
-    command: >-
-      sh -c "pnpm --filter @idfb/database exec prisma migrate deploy &&
-             pnpm --filter @idfb/database exec prisma db seed"
-
+  # The API applies migrations and seeds base data on startup via its
+  # entrypoint (see apps/api/docker-entrypoint.sh), so a fresh
+  # `docker compose up` works on the first try.
   api:
     build:
       context: .
@@ -90,8 +75,6 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
-      migrate:
-        condition: service_completed_successfully
     environment:
       NODE_ENV: production
       PORT: 3001
