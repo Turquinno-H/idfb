@@ -7,7 +7,7 @@ import { api, ApiError } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import type { PaginatedResponse, Product, StockItem, Warehouse } from '@/lib/types';
-import { Button, Card, Input, Label, Select } from '@/components/ui';
+import { Button, Input, Label, Select } from '@/components/ui';
 import { DataTable, type Column } from '@/components/data-table';
 import { PageHeader } from '@/components/page-header';
 import { Modal } from '@/components/modal';
