@@ -21,6 +21,10 @@ import { SalesModule } from './sales/sales.module';
 import { FinanceModule } from './finance/finance.module';
 import { AccountingModule } from './accounting/accounting.module';
 import { HrModule } from './hr/hr.module';
+import { ProjectsModule } from './projects/projects.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { SettingsModule } from './settings/settings.module';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -50,6 +54,10 @@ import { HrModule } from './hr/hr.module';
     FinanceModule,
     AccountingModule,
     HrModule,
+    ProjectsModule,
+    NotificationsModule,
+    SettingsModule,
+    RolesModule,
   ],
 })
 export class BusinessModule {}
