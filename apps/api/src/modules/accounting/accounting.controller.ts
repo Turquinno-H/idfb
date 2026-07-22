@@ -1,8 +1,22 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ChartOfAccountsService } from './accounts.service';
 import { JournalEntriesService } from './journal-entries.service';
-import { CreateAccountDto, CreateJournalEntryDto, UpdateAccountDto } from './dto/accounting.dto';
+import {
+  CreateAccountDto,
+  CreateJournalEntryDto,
+  UpdateAccountDto,
+} from './dto/accounting.dto';
 import { PaginationQueryDto } from '../../common/dto/pagination.dto';
 import { TenantCompanyId } from '../../common/decorators/tenant.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -24,21 +38,30 @@ export class AccountingController {
   @RequirePermissions({ resource: 'account', action: 'create' })
   @Audit('create', 'Account')
   @ApiOperation({ summary: 'Create a chart-of-accounts account' })
-  createAccount(@TenantCompanyId() companyId: string, @Body() dto: CreateAccountDto) {
+  createAccount(
+    @TenantCompanyId() companyId: string,
+    @Body() dto: CreateAccountDto,
+  ) {
     return this.accountsService.create(companyId, dto);
   }
 
   @Get('accounts')
   @RequirePermissions({ resource: 'account', action: 'read' })
   @ApiOperation({ summary: 'List accounts' })
-  listAccounts(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  listAccounts(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.accountsService.findAll(companyId, query);
   }
 
   @Get('accounts/:id')
   @RequirePermissions({ resource: 'account', action: 'read' })
   @ApiOperation({ summary: 'Get an account by id' })
-  getAccount(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  getAccount(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.accountsService.findOne(companyId, id);
   }
 
@@ -58,7 +81,10 @@ export class AccountingController {
   @RequirePermissions({ resource: 'account', action: 'delete' })
   @Audit('delete', 'Account')
   @ApiOperation({ summary: 'Delete an account' })
-  removeAccount(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  removeAccount(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.accountsService.remove(companyId, id);
   }
 
@@ -78,7 +104,10 @@ export class AccountingController {
   @Get('journal-entries')
   @RequirePermissions({ resource: 'journal_entry', action: 'read' })
   @ApiOperation({ summary: 'List journal entries' })
-  listEntries(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  listEntries(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.journalService.findAll(companyId, query);
   }
 
@@ -92,7 +121,10 @@ export class AccountingController {
   @Get('journal-entries/:id')
   @RequirePermissions({ resource: 'journal_entry', action: 'read' })
   @ApiOperation({ summary: 'Get a journal entry by id' })
-  getEntry(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  getEntry(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.journalService.findOne(companyId, id);
   }
 
@@ -100,7 +132,10 @@ export class AccountingController {
   @RequirePermissions({ resource: 'journal_entry', action: 'approve' })
   @Audit('post', 'JournalEntry')
   @ApiOperation({ summary: 'Post a draft journal entry to the ledger' })
-  postEntry(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  postEntry(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.journalService.post(companyId, id);
   }
 }

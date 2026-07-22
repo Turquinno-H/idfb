@@ -1,5 +1,10 @@
 import { Controller, Get, Header, Param, Query, Res } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { Response } from 'express';
 import { BarcodeService } from './barcode.service';
 

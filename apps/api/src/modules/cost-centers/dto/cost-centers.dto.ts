@@ -1,13 +1,19 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsOptional, IsUUID, IsNumber, IsEnum, Min, Max, MaxLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateCostCenterDto {
-  @ApiProperty({ example: "CC-100" })
+  @ApiProperty({ example: 'CC-100' })
   @IsString()
   @MaxLength(50)
   code!: string;
 
-  @ApiProperty({ example: "Satış Departmanı" })
+  @ApiProperty({ example: 'Satış Departmanı' })
   @IsString()
   @MaxLength(150)
   name!: string;

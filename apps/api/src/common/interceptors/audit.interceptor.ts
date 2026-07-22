@@ -20,18 +20,24 @@ export class AuditInterceptor implements NestInterceptor {
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    const metadata = this.reflector.get<AuditMetadata | undefined>(AUDIT_KEY, context.getHandler());
+    const metadata = this.reflector.get<AuditMetadata | undefined>(
+      AUDIT_KEY,
+      context.getHandler(),
+    );
     if (!metadata || context.getType() !== 'http') {
       return next.handle();
     }
 
-    const request = context.switchToHttp().getRequest<Request & { user?: AuthenticatedUser }>();
+    const request = context
+      .switchToHttp()
+      .getRequest<Request & { user?: AuthenticatedUser }>();
     const user = request.user;
 
     return next.handle().pipe(
       tap((result) => {
         const entityId =
-          (result as { id?: string } | undefined)?.id ?? (request.params?.id as string | undefined);
+          (result as { id?: string } | undefined)?.id ??
+          (request.params?.id as string | undefined);
 
         void this.auditService.record({
           companyId: user?.companyId ?? null,
@@ -52,7 +58,12 @@ export class AuditInterceptor implements NestInterceptor {
       return undefined;
     }
     const clone = { ...(payload as Record<string, unknown>) };
-    for (const sensitive of ['passwordHash', 'password', 'tokenHash', 'refreshToken']) {
+    for (const sensitive of [
+      'passwordHash',
+      'password',
+      'tokenHash',
+      'refreshToken',
+    ]) {
       delete clone[sensitive];
     }
     return JSON.parse(JSON.stringify(clone)) as Prisma.InputJsonValue;

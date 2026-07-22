@@ -23,8 +23,14 @@ describe('calculatePayroll', () => {
     const withoutBonus = calculatePayroll({ grossSalary: 20000 });
     expect(withBonus.sgkEmployee).toBeGreaterThan(withoutBonus.sgkEmployee);
 
-    const withDeduction = calculatePayroll({ grossSalary: 20000, otherDeductions: 1000 });
-    expect(withDeduction.netSalary).toBeCloseTo(withoutBonus.netSalary - 1000, 2);
+    const withDeduction = calculatePayroll({
+      grossSalary: 20000,
+      otherDeductions: 1000,
+    });
+    expect(withDeduction.netSalary).toBeCloseTo(
+      withoutBonus.netSalary - 1000,
+      2,
+    );
   });
 
   it('never produces a negative net salary for a positive gross', () => {

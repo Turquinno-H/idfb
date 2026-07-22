@@ -38,7 +38,9 @@ export class FilesController {
   @Post('upload')
   @RequirePermissions({ resource: 'attachment', action: 'create' })
   @Audit('upload', 'Attachment')
-  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: MAX_FILE_SIZE } }))
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: MAX_FILE_SIZE } }),
+  )
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -50,7 +52,9 @@ export class FilesController {
       },
     },
   })
-  @ApiOperation({ summary: 'Upload a file to object storage and register an attachment' })
+  @ApiOperation({
+    summary: 'Upload a file to object storage and register an attachment',
+  })
   upload(
     @TenantCompanyId() companyId: string,
     @CurrentUser() user: AuthenticatedUser,
@@ -88,7 +92,10 @@ export class FilesController {
   @Get(':id/download-url')
   @RequirePermissions({ resource: 'attachment', action: 'read' })
   @ApiOperation({ summary: 'Get a presigned download URL for an attachment' })
-  downloadUrl(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  downloadUrl(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.getDownloadUrl(companyId, id);
   }
 
@@ -96,7 +103,10 @@ export class FilesController {
   @RequirePermissions({ resource: 'attachment', action: 'delete' })
   @Audit('delete', 'Attachment')
   @ApiOperation({ summary: 'Delete an attachment' })
-  remove(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  remove(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.remove(companyId, id);
   }
 }

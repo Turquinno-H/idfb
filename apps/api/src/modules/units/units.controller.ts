@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UnitsService } from './units.service';
 import { CreateUnitDto, UpdateUnitDto } from './dto/units.dto';
@@ -24,14 +34,20 @@ export class UnitsController {
   @Get()
   @RequirePermissions({ resource: 'unit', action: 'read' })
   @ApiOperation({ summary: 'List Unit records' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'unit', action: 'read' })
   @ApiOperation({ summary: 'Get Unit by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.findOne(companyId, id);
   }
 
@@ -51,7 +67,10 @@ export class UnitsController {
   @RequirePermissions({ resource: 'unit', action: 'delete' })
   @Audit('delete', 'Unit')
   @ApiOperation({ summary: 'Delete Unit' })
-  remove(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  remove(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.remove(companyId, id);
   }
 }

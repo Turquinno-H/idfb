@@ -1,13 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, InvoiceStatus } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { nextDocumentNumber } from '../../common/util/document-number';
 import { computeDocumentTotals } from '../../common/util/line-totals';
 import { CreatePurchaseInvoiceDto } from './dto/purchase-invoice.dto';
 
 type PurchaseInvoiceEntity = Prisma.PurchaseInvoiceGetPayload<{
-  include: { supplier: true; currency: true; lines: { include: { product: true; taxRate: true } } };
+  include: {
+    supplier: true;
+    currency: true;
+    lines: { include: { product: true; taxRate: true } };
+  };
 }>;
 
 const PI_INCLUDE = {
@@ -47,12 +55,16 @@ export class PurchaseInvoicesService {
     userId: string,
     dto: CreatePurchaseInvoiceDto,
   ): Promise<PurchaseInvoiceEntity> {
-    const supplier = await this.prisma.supplier.findFirst({ where: { id: dto.supplierId, companyId } });
+    const supplier = await this.prisma.supplier.findFirst({
+      where: { id: dto.supplierId, companyId },
+    });
     if (!supplier) {
       throw new NotFoundException('Supplier not found');
     }
 
-    const taxRateIds = dto.lines.map((l) => l.taxRateId).filter((v): v is string => Boolean(v));
+    const taxRateIds = dto.lines
+      .map((l) => l.taxRateId)
+      .filter((v): v is string => Boolean(v));
     const taxRates = await this.prisma.taxRate.findMany({
       where: { companyId, id: { in: taxRateIds } },
     });
@@ -67,8 +79,16 @@ export class PurchaseInvoicesService {
       })),
     );
 
-    const currencyId = await this.resolveCurrencyId(companyId, dto.supplierId, dto.currencyId);
-    const invoiceNumber = await nextDocumentNumber(this.prisma.purchaseInvoice, companyId, 'AF');
+    const currencyId = await this.resolveCurrencyId(
+      companyId,
+      dto.supplierId,
+      dto.currencyId,
+    );
+    const invoiceNumber = await nextDocumentNumber(
+      this.prisma.purchaseInvoice,
+      companyId,
+      'AF',
+    );
 
     return this.prisma.purchaseInvoice.create({
       data: {
@@ -106,7 +126,9 @@ export class PurchaseInvoicesService {
   ): Promise<PaginatedResult<PurchaseInvoiceEntity>> {
     const where: Prisma.PurchaseInvoiceWhereInput = {
       companyId,
-      ...(query.search ? { invoiceNumber: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { invoiceNumber: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.purchaseInvoice.findMany({

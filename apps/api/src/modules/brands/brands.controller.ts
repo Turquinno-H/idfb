@@ -1,5 +1,15 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { BrandsService } from './brands.service';
 import { CreateBrandDto, UpdateBrandDto } from './dto/brand.dto';
 import { PaginationQueryDto } from '../../common/dto/pagination.dto';
@@ -22,13 +32,19 @@ export class BrandsController {
 
   @Get()
   @RequirePermissions({ resource: 'brand', action: 'read' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.brandsService.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'brand', action: 'read' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.brandsService.findOne(companyId, id);
   }
 
@@ -46,7 +62,10 @@ export class BrandsController {
   @Delete(':id')
   @RequirePermissions({ resource: 'brand', action: 'delete' })
   @Audit('delete', 'Brand')
-  remove(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  remove(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.brandsService.remove(companyId, id);
   }
 }

@@ -26,13 +26,25 @@ export class MetricsInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap({
-        next: () => this.recordMetric(start, request.method, route, response.statusCode),
-        error: () => this.recordMetric(start, request.method, route, response.statusCode || 500),
+        next: () =>
+          this.recordMetric(start, request.method, route, response.statusCode),
+        error: () =>
+          this.recordMetric(
+            start,
+            request.method,
+            route,
+            response.statusCode || 500,
+          ),
       }),
     );
   }
 
-  private recordMetric(startTime: bigint, method: string, route: string, statusCode: number): void {
+  private recordMetric(
+    startTime: bigint,
+    method: string,
+    route: string,
+    statusCode: number,
+  ): void {
     const durationSeconds = Number(process.hrtime.bigint() - startTime) / 1e9;
     const labels = { method, route, status_code: String(statusCode) };
     this.metricsService.httpRequestDuration.observe(labels, durationSeconds);

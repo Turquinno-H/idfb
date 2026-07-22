@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateRoleDto, UpdateRoleDto } from './dto/roles.dto';
@@ -15,8 +19,12 @@ const ROLE_INCLUDE = {
 export class RolesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async listPermissions(): Promise<Prisma.PermissionGetPayload<Record<string, never>>[]> {
-    return this.prisma.permission.findMany({ orderBy: [{ resource: 'asc' }, { action: 'asc' }] });
+  async listPermissions(): Promise<
+    Prisma.PermissionGetPayload<Record<string, never>>[]
+  > {
+    return this.prisma.permission.findMany({
+      orderBy: [{ resource: 'asc' }, { action: 'asc' }],
+    });
   }
 
   async create(companyId: string, dto: CreateRoleDto): Promise<RoleEntity> {
@@ -43,17 +51,26 @@ export class RolesService {
   }
 
   async findOne(companyId: string, id: string): Promise<RoleEntity> {
-    const role = await this.prisma.role.findFirst({ where: { id, companyId }, include: ROLE_INCLUDE });
+    const role = await this.prisma.role.findFirst({
+      where: { id, companyId },
+      include: ROLE_INCLUDE,
+    });
     if (!role) {
       throw new NotFoundException('Role not found');
     }
     return role;
   }
 
-  async update(companyId: string, id: string, dto: UpdateRoleDto): Promise<RoleEntity> {
+  async update(
+    companyId: string,
+    id: string,
+    dto: UpdateRoleDto,
+  ): Promise<RoleEntity> {
     const role = await this.findOne(companyId, id);
     if (role.isSystem && dto.permissionIds) {
-      throw new BadRequestException('System role permissions cannot be modified');
+      throw new BadRequestException(
+        'System role permissions cannot be modified',
+      );
     }
 
     return this.prisma.$transaction(async (tx) => {
@@ -61,7 +78,10 @@ export class RolesService {
         await this.assertPermissionsExist(dto.permissionIds);
         await tx.rolePermission.deleteMany({ where: { roleId: id } });
         await tx.rolePermission.createMany({
-          data: dto.permissionIds.map((permissionId) => ({ roleId: id, permissionId })),
+          data: dto.permissionIds.map((permissionId) => ({
+            roleId: id,
+            permissionId,
+          })),
         });
       }
       await tx.role.update({
@@ -84,7 +104,9 @@ export class RolesService {
     if (permissionIds.length === 0) {
       return;
     }
-    const count = await this.prisma.permission.count({ where: { id: { in: permissionIds } } });
+    const count = await this.prisma.permission.count({
+      where: { id: { in: permissionIds } },
+    });
     if (count !== new Set(permissionIds).size) {
       throw new BadRequestException('One or more permission ids are invalid');
     }

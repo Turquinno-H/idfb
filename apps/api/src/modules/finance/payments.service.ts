@@ -1,7 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InvoiceStatus, Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { resolveCompanyCurrency } from '../../common/util/company-currency';
 import { CreatePaymentDto } from './dto/finance.dto';
 
@@ -18,12 +26,22 @@ export class PaymentsService {
    * invoice's paid amount and status are updated atomically and the payment
    * may not exceed the outstanding balance.
    */
-  async create(companyId: string, userId: string, dto: CreatePaymentDto): Promise<PaymentEntity> {
-    const supplier = await this.prisma.supplier.findFirst({ where: { id: dto.supplierId, companyId } });
+  async create(
+    companyId: string,
+    userId: string,
+    dto: CreatePaymentDto,
+  ): Promise<PaymentEntity> {
+    const supplier = await this.prisma.supplier.findFirst({
+      where: { id: dto.supplierId, companyId },
+    });
     if (!supplier) {
       throw new NotFoundException('Supplier not found');
     }
-    const currencyId = await resolveCompanyCurrency(this.prisma, companyId, dto.currencyId);
+    const currencyId = await resolveCompanyCurrency(
+      this.prisma,
+      companyId,
+      dto.currencyId,
+    );
 
     return this.prisma.$transaction(async (tx) => {
       if (dto.purchaseInvoiceId) {
@@ -34,7 +52,9 @@ export class PaymentsService {
           throw new NotFoundException('Purchase invoice not found');
         }
         if (invoice.status === InvoiceStatus.CANCELLED) {
-          throw new BadRequestException('Cannot pay against a cancelled invoice');
+          throw new BadRequestException(
+            'Cannot pay against a cancelled invoice',
+          );
         }
         const outstanding = Number(invoice.total) - Number(invoice.paidAmount);
         if (dto.amount > outstanding + 1e-6) {
@@ -48,7 +68,9 @@ export class PaymentsService {
           where: { id: invoice.id },
           data: {
             paidAmount: newPaid,
-            status: fullyPaid ? InvoiceStatus.PAID : InvoiceStatus.PARTIALLY_PAID,
+            status: fullyPaid
+              ? InvoiceStatus.PAID
+              : InvoiceStatus.PARTIALLY_PAID,
           },
         });
       }

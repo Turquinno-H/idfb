@@ -38,12 +38,15 @@ import { AuditInterceptor } from './common/interceptors/audit.interceptor';
     WinstonModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) =>
-        createWinstonLogger(configService.get<string>('app.nodeEnv') ?? 'development'),
+        createWinstonLogger(
+          configService.get<string>('app.nodeEnv') ?? 'development',
+        ),
     }),
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const throttle = configService.get<AppConfig['throttle']>('app.throttle')!;
+        const throttle =
+          configService.get<AppConfig['throttle']>('app.throttle')!;
         return { throttlers: [{ ttl: throttle.ttlMs, limit: throttle.limit }] };
       },
     }),

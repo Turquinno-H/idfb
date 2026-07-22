@@ -14,7 +14,9 @@ import {
 import { AttendanceStatus } from '@idfb/database';
 
 export class CreateEmployeeDto {
-  @ApiPropertyOptional({ description: 'Auto-generated (PER-000001) when omitted' })
+  @ApiPropertyOptional({
+    description: 'Auto-generated (PER-000001) when omitted',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(50)
@@ -32,7 +34,9 @@ export class CreateEmployeeDto {
 
   @ApiProperty({ example: '12345678901' })
   @IsString()
-  @Matches(/^\d{11}$/, { message: 'nationalId must be an 11-digit Turkish identity number' })
+  @Matches(/^\d{11}$/, {
+    message: 'nationalId must be an 11-digit Turkish identity number',
+  })
   nationalId!: string;
 
   @ApiPropertyOptional()
@@ -84,11 +88,16 @@ export class CreatePayrollDto {
   @IsUUID()
   employeeId!: string;
 
-  @ApiProperty({ example: '2026-07-01T00:00:00.000Z', description: 'Any date within the payroll month' })
+  @ApiProperty({
+    example: '2026-07-01T00:00:00.000Z',
+    description: 'Any date within the payroll month',
+  })
   @IsString()
   period!: string;
 
-  @ApiPropertyOptional({ description: 'Override gross salary; defaults to the employee base salary' })
+  @ApiPropertyOptional({
+    description: 'Override gross salary; defaults to the employee base salary',
+  })
   @IsOptional()
   @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 4 })
@@ -129,7 +138,10 @@ export class CreateAttendanceDto {
   @IsString()
   checkOut?: string;
 
-  @ApiPropertyOptional({ enum: AttendanceStatus, default: AttendanceStatus.PRESENT })
+  @ApiPropertyOptional({
+    enum: AttendanceStatus,
+    default: AttendanceStatus.PRESENT,
+  })
   @IsOptional()
   @IsEnum(AttendanceStatus)
   status?: AttendanceStatus;

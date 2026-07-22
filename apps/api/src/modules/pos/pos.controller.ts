@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PosService } from './pos.service';
 import {
@@ -23,7 +32,10 @@ export class PosController {
   @RequirePermissions({ resource: 'pos_transaction', action: 'create' })
   @Audit('create', 'POSTerminal')
   @ApiOperation({ summary: 'Create a POS terminal' })
-  createTerminal(@TenantCompanyId() companyId: string, @Body() dto: CreatePosTerminalDto) {
+  createTerminal(
+    @TenantCompanyId() companyId: string,
+    @Body() dto: CreatePosTerminalDto,
+  ) {
     return this.service.createTerminal(companyId, dto);
   }
 
@@ -61,14 +73,20 @@ export class PosController {
   @Get('transactions')
   @RequirePermissions({ resource: 'pos_transaction', action: 'read' })
   @ApiOperation({ summary: 'List POS transactions' })
-  listTransactions(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  listTransactions(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.listTransactions(companyId, query);
   }
 
   @Get('transactions/:id')
   @RequirePermissions({ resource: 'pos_transaction', action: 'read' })
   @ApiOperation({ summary: 'Get a POS transaction by id' })
-  getTransaction(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  getTransaction(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.getTransaction(companyId, id);
   }
 }

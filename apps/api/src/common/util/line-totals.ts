@@ -37,10 +37,16 @@ export function computeLine(line: DocumentLineInput): LineComputation {
 }
 
 /** Aggregates a document's lines into subtotal, tax total and grand total. */
-export function computeDocumentTotals(lines: DocumentLineInput[]): DocumentTotals {
+export function computeDocumentTotals(
+  lines: DocumentLineInput[],
+): DocumentTotals {
   const computedLines = lines.map(computeLine);
-  const subtotal = round(computedLines.reduce((sum, line) => sum + line.netLineTotal, 0));
-  const taxTotal = round(computedLines.reduce((sum, line) => sum + line.taxAmount, 0));
+  const subtotal = round(
+    computedLines.reduce((sum, line) => sum + line.netLineTotal, 0),
+  );
+  const taxTotal = round(
+    computedLines.reduce((sum, line) => sum + line.taxAmount, 0),
+  );
   return {
     subtotal,
     taxTotal,

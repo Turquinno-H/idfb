@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { CreateAccountDto, UpdateAccountDto } from './dto/accounting.dto';
 
 type AccountEntity = Prisma.AccountGetPayload<Record<string, never>>;
@@ -10,7 +14,10 @@ type AccountEntity = Prisma.AccountGetPayload<Record<string, never>>;
 export class ChartOfAccountsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(companyId: string, dto: CreateAccountDto): Promise<AccountEntity> {
+  async create(
+    companyId: string,
+    dto: CreateAccountDto,
+  ): Promise<AccountEntity> {
     return this.prisma.account.create({
       data: {
         companyId,
@@ -50,14 +57,20 @@ export class ChartOfAccountsService {
   }
 
   async findOne(companyId: string, id: string): Promise<AccountEntity> {
-    const account = await this.prisma.account.findFirst({ where: { id, companyId } });
+    const account = await this.prisma.account.findFirst({
+      where: { id, companyId },
+    });
     if (!account) {
       throw new NotFoundException('Account not found');
     }
     return account;
   }
 
-  async update(companyId: string, id: string, dto: UpdateAccountDto): Promise<AccountEntity> {
+  async update(
+    companyId: string,
+    id: string,
+    dto: UpdateAccountDto,
+  ): Promise<AccountEntity> {
     await this.findOne(companyId, id);
     return this.prisma.account.update({ where: { id }, data: dto });
   }

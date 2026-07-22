@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
 
 type CategoryEntity = Prisma.CategoryGetPayload<Record<string, never>>;
@@ -10,7 +14,10 @@ type CategoryEntity = Prisma.CategoryGetPayload<Record<string, never>>;
 export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(companyId: string, dto: CreateCategoryDto): Promise<CategoryEntity> {
+  async create(
+    companyId: string,
+    dto: CreateCategoryDto,
+  ): Promise<CategoryEntity> {
     return this.prisma.category.create({
       data: {
         companyId,
@@ -28,7 +35,9 @@ export class CategoriesService {
   ): Promise<PaginatedResult<CategoryEntity>> {
     const where: Prisma.CategoryWhereInput = {
       companyId,
-      ...(query.search ? { name: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { name: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
 
     const [data, total] = await this.prisma.$transaction([
@@ -45,14 +54,20 @@ export class CategoriesService {
   }
 
   async findOne(companyId: string, id: string): Promise<CategoryEntity> {
-    const category = await this.prisma.category.findFirst({ where: { id, companyId } });
+    const category = await this.prisma.category.findFirst({
+      where: { id, companyId },
+    });
     if (!category) {
       throw new NotFoundException('Category not found');
     }
     return category;
   }
 
-  async update(companyId: string, id: string, dto: UpdateCategoryDto): Promise<CategoryEntity> {
+  async update(
+    companyId: string,
+    id: string,
+    dto: UpdateCategoryDto,
+  ): Promise<CategoryEntity> {
     await this.findOne(companyId, id);
     return this.prisma.category.update({ where: { id }, data: dto });
   }

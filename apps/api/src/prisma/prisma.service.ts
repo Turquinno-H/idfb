@@ -1,4 +1,9 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { Prisma, PrismaClient } from '@idfb/database';
 
 @Injectable()
@@ -26,7 +31,9 @@ export class PrismaService
 
     if (process.env.NODE_ENV === 'development') {
       this.$on('query', (event) => {
-        this.logger.debug(`${event.query} :: ${event.params} (${event.duration}ms)`);
+        this.logger.debug(
+          `${event.query} :: ${event.params} (${event.duration}ms)`,
+        );
       });
     }
   }

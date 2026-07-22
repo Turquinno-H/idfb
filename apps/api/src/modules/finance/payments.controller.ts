@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/finance.dto';
@@ -18,7 +26,9 @@ export class PaymentsController {
   @Post()
   @RequirePermissions({ resource: 'payment', action: 'create' })
   @Audit('create', 'Payment')
-  @ApiOperation({ summary: 'Record a supplier payment (updates invoice balance)' })
+  @ApiOperation({
+    summary: 'Record a supplier payment (updates invoice balance)',
+  })
   create(
     @TenantCompanyId() companyId: string,
     @CurrentUser() user: AuthenticatedUser,
@@ -30,14 +40,20 @@ export class PaymentsController {
   @Get()
   @RequirePermissions({ resource: 'payment', action: 'read' })
   @ApiOperation({ summary: 'List payments' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'payment', action: 'read' })
   @ApiOperation({ summary: 'Get a payment by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.findOne(companyId, id);
   }
 }

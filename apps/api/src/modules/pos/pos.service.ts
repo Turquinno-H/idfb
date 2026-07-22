@@ -1,7 +1,19 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { POSTransactionStatus, Prisma, StockMovementType } from '@idfb/database';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import {
+  POSTransactionStatus,
+  Prisma,
+  StockMovementType,
+} from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { nextDocumentNumber } from '../../common/util/document-number';
 import { computeDocumentTotals } from '../../common/util/line-totals';
 import { InventoryService } from '../inventory/inventory.service';
@@ -11,9 +23,15 @@ import {
   UpdatePosTerminalDto,
 } from './dto/pos.dto';
 
-type PosTerminalEntity = Prisma.POSTerminalGetPayload<{ include: { warehouse: true } }>;
+type PosTerminalEntity = Prisma.POSTerminalGetPayload<{
+  include: { warehouse: true };
+}>;
 type PosTransactionEntity = Prisma.POSTransactionGetPayload<{
-  include: { lines: { include: { product: true } }; payments: true; customer: true };
+  include: {
+    lines: { include: { product: true } };
+    payments: true;
+    customer: true;
+  };
 }>;
 
 const POS_TX_INCLUDE = {
@@ -31,7 +49,10 @@ export class PosService {
 
   // ---- Terminals ----
 
-  async createTerminal(companyId: string, dto: CreatePosTerminalDto): Promise<PosTerminalEntity> {
+  async createTerminal(
+    companyId: string,
+    dto: CreatePosTerminalDto,
+  ): Promise<PosTerminalEntity> {
     const warehouse = await this.prisma.warehouse.findFirst({
       where: { id: dto.warehouseId, companyId },
     });
@@ -64,7 +85,9 @@ export class PosService {
     id: string,
     dto: UpdatePosTerminalDto,
   ): Promise<PosTerminalEntity> {
-    const terminal = await this.prisma.pOSTerminal.findFirst({ where: { id, companyId } });
+    const terminal = await this.prisma.pOSTerminal.findFirst({
+      where: { id, companyId },
+    });
     if (!terminal) {
       throw new NotFoundException('POS terminal not found');
     }
@@ -107,7 +130,12 @@ export class PosService {
     const taxRateIds = [
       ...new Set(
         dto.lines
-          .map((l) => l.taxRateId ?? productMap.get(l.productId)?.taxRateId ?? undefined)
+          .map(
+            (l) =>
+              l.taxRateId ??
+              productMap.get(l.productId)?.taxRateId ??
+              undefined,
+          )
           .filter((v): v is string => Boolean(v)),
       ),
     ];
@@ -131,7 +159,10 @@ export class PosService {
     });
 
     const totals = computeDocumentTotals(resolvedLines);
-    const tendered = dto.payments.reduce((sum, payment) => sum + payment.amount, 0);
+    const tendered = dto.payments.reduce(
+      (sum, payment) => sum + payment.amount,
+      0,
+    );
     if (tendered + 1e-6 < totals.total) {
       throw new BadRequestException(
         `Tendered amount ${tendered} is less than the total ${totals.total}`,
@@ -139,7 +170,11 @@ export class PosService {
     }
 
     return this.prisma.$transaction(async (tx) => {
-      const transactionNumber = await nextDocumentNumber(tx.pOSTransaction, companyId, 'POS');
+      const transactionNumber = await nextDocumentNumber(
+        tx.pOSTransaction,
+        companyId,
+        'POS',
+      );
 
       const transaction = await tx.pOSTransaction.create({
         data: {
@@ -214,7 +249,10 @@ export class PosService {
     return paginate(data, total, query.page, query.limit);
   }
 
-  async getTransaction(companyId: string, id: string): Promise<PosTransactionEntity> {
+  async getTransaction(
+    companyId: string,
+    id: string,
+  ): Promise<PosTransactionEntity> {
     const transaction = await this.prisma.pOSTransaction.findFirst({
       where: { id, companyId },
       include: POS_TX_INCLUDE,

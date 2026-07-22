@@ -10,7 +10,10 @@ export class SettingsService {
   async listSettings(
     companyId: string,
   ): Promise<Prisma.CompanySettingGetPayload<Record<string, never>>[]> {
-    return this.prisma.companySetting.findMany({ where: { companyId }, orderBy: { key: 'asc' } });
+    return this.prisma.companySetting.findMany({
+      where: { companyId },
+      orderBy: { key: 'asc' },
+    });
   }
 
   async upsertSetting(
@@ -19,7 +22,11 @@ export class SettingsService {
   ): Promise<Prisma.CompanySettingGetPayload<Record<string, never>>> {
     return this.prisma.companySetting.upsert({
       where: { companyId_key: { companyId, key: dto.key } },
-      create: { companyId, key: dto.key, value: dto.value as Prisma.InputJsonValue },
+      create: {
+        companyId,
+        key: dto.key,
+        value: dto.value as Prisma.InputJsonValue,
+      },
       update: { value: dto.value as Prisma.InputJsonValue },
     });
   }
@@ -41,7 +48,9 @@ export class SettingsService {
     return this.getCompanyProfile(companyId);
   }
 
-  async listCurrencies(): Promise<Prisma.CurrencyGetPayload<Record<string, never>>[]> {
+  async listCurrencies(): Promise<
+    Prisma.CurrencyGetPayload<Record<string, never>>[]
+  > {
     return this.prisma.currency.findMany({ orderBy: { code: 'asc' } });
   }
 }

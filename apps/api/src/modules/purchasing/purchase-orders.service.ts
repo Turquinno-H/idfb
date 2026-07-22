@@ -1,7 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma, PurchaseOrderStatus, StockMovementType } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { nextDocumentNumber } from '../../common/util/document-number';
 import { InventoryService } from '../inventory/inventory.service';
 import {
@@ -55,8 +63,14 @@ export class PurchaseOrdersService {
     return company.baseCurrencyId;
   }
 
-  async create(companyId: string, userId: string, dto: CreatePurchaseOrderDto): Promise<PurchaseOrderEntity> {
-    const supplier = await this.prisma.supplier.findFirst({ where: { id: dto.supplierId, companyId } });
+  async create(
+    companyId: string,
+    userId: string,
+    dto: CreatePurchaseOrderDto,
+  ): Promise<PurchaseOrderEntity> {
+    const supplier = await this.prisma.supplier.findFirst({
+      where: { id: dto.supplierId, companyId },
+    });
     if (!supplier) {
       throw new NotFoundException('Supplier not found');
     }
@@ -67,8 +81,16 @@ export class PurchaseOrdersService {
       throw new NotFoundException('Warehouse not found');
     }
 
-    const currencyId = await this.resolveCurrencyId(companyId, dto.supplierId, dto.currencyId);
-    const orderNumber = await nextDocumentNumber(this.prisma.purchaseOrder, companyId, 'SAS');
+    const currencyId = await this.resolveCurrencyId(
+      companyId,
+      dto.supplierId,
+      dto.currencyId,
+    );
+    const orderNumber = await nextDocumentNumber(
+      this.prisma.purchaseOrder,
+      companyId,
+      'SAS',
+    );
 
     const created = await this.prisma.purchaseOrder.create({
       data: {
@@ -104,7 +126,9 @@ export class PurchaseOrdersService {
   ): Promise<PaginatedResult<PurchaseOrderEntity>> {
     const where: Prisma.PurchaseOrderWhereInput = {
       companyId,
-      ...(query.search ? { orderNumber: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { orderNumber: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.purchaseOrder.findMany({
@@ -130,7 +154,11 @@ export class PurchaseOrdersService {
     return order;
   }
 
-  async update(companyId: string, id: string, dto: UpdatePurchaseOrderDto): Promise<PurchaseOrderEntity> {
+  async update(
+    companyId: string,
+    id: string,
+    dto: UpdatePurchaseOrderDto,
+  ): Promise<PurchaseOrderEntity> {
     const order = await this.findOne(companyId, id);
     if (order.status !== PurchaseOrderStatus.DRAFT) {
       throw new BadRequestException('Only draft purchase orders can be edited');
@@ -138,7 +166,9 @@ export class PurchaseOrdersService {
 
     return this.prisma.$transaction(async (tx) => {
       if (dto.lines) {
-        await tx.purchaseOrderLine.deleteMany({ where: { purchaseOrderId: id } });
+        await tx.purchaseOrderLine.deleteMany({
+          where: { purchaseOrderId: id },
+        });
         await tx.purchaseOrderLine.createMany({
           data: dto.lines.map((line) => ({
             purchaseOrderId: id,
@@ -157,18 +187,25 @@ export class PurchaseOrdersService {
           warehouseId: dto.warehouseId,
           branchId: dto.branchId,
           currencyId: dto.currencyId,
-          expectedDate: dto.expectedDate ? new Date(dto.expectedDate) : undefined,
+          expectedDate: dto.expectedDate
+            ? new Date(dto.expectedDate)
+            : undefined,
           note: dto.note,
         },
       });
-      return tx.purchaseOrder.findFirstOrThrow({ where: { id }, include: PO_INCLUDE });
+      return tx.purchaseOrder.findFirstOrThrow({
+        where: { id },
+        include: PO_INCLUDE,
+      });
     });
   }
 
   async confirm(companyId: string, id: string): Promise<PurchaseOrderEntity> {
     const order = await this.findOne(companyId, id);
     if (order.status !== PurchaseOrderStatus.DRAFT) {
-      throw new BadRequestException('Only draft purchase orders can be confirmed');
+      throw new BadRequestException(
+        'Only draft purchase orders can be confirmed',
+      );
     }
     await this.prisma.purchaseOrder.update({
       where: { id },
@@ -194,7 +231,9 @@ export class PurchaseOrdersService {
       PurchaseOrderStatus.PARTIALLY_RECEIVED,
     ];
     if (!receivableStatuses.includes(order.status)) {
-      throw new BadRequestException('Purchase order must be confirmed before receiving');
+      throw new BadRequestException(
+        'Purchase order must be confirmed before receiving',
+      );
     }
 
     const warehouseId = dto.warehouseId ?? order.warehouseId;
@@ -203,9 +242,12 @@ export class PurchaseOrdersService {
     for (const receiveLine of dto.lines) {
       const orderLine = lineById.get(receiveLine.purchaseOrderLineId);
       if (!orderLine) {
-        throw new BadRequestException(`Order line ${receiveLine.purchaseOrderLineId} not found on this order`);
+        throw new BadRequestException(
+          `Order line ${receiveLine.purchaseOrderLineId} not found on this order`,
+        );
       }
-      const remaining = Number(orderLine.quantity) - Number(orderLine.receivedQuantity);
+      const remaining =
+        Number(orderLine.quantity) - Number(orderLine.receivedQuantity);
       if (receiveLine.quantity > remaining + 1e-6) {
         throw new BadRequestException(
           `Cannot receive ${receiveLine.quantity} of product; only ${remaining} remaining`,
@@ -214,7 +256,11 @@ export class PurchaseOrdersService {
     }
 
     await this.prisma.$transaction(async (tx) => {
-      const receiptNumber = await nextDocumentNumber(tx.purchaseReceipt, companyId, 'MAL');
+      const receiptNumber = await nextDocumentNumber(
+        tx.purchaseReceipt,
+        companyId,
+        'MAL',
+      );
       const receipt = await tx.purchaseReceipt.create({
         data: {
           companyId,
@@ -284,7 +330,9 @@ export class PurchaseOrdersService {
   async cancel(companyId: string, id: string): Promise<PurchaseOrderEntity> {
     const order = await this.findOne(companyId, id);
     if (order.status === PurchaseOrderStatus.RECEIVED) {
-      throw new BadRequestException('Fully received purchase orders cannot be cancelled');
+      throw new BadRequestException(
+        'Fully received purchase orders cannot be cancelled',
+      );
     }
     await this.prisma.purchaseOrder.update({
       where: { id },

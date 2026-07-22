@@ -31,7 +31,10 @@ export class TokenService {
     return this.configService.get<AppConfig['jwt']>('app.jwt')!;
   }
 
-  signAccessToken(payload: AccessTokenPayload): { token: string; expiresIn: number } {
+  signAccessToken(payload: AccessTokenPayload): {
+    token: string;
+    expiresIn: number;
+  } {
     const expiresIn = this.jwtConfig.accessExpiresIn;
     const token = this.jwtService.sign(payload, {
       secret: this.jwtConfig.accessSecret,
@@ -53,7 +56,9 @@ export class TokenService {
   async issueRefreshToken(params: IssueRefreshTokenParams): Promise<string> {
     const rawToken = randomBytes(64).toString('hex');
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + this.jwtConfig.refreshExpiresInDays);
+    expiresAt.setDate(
+      expiresAt.getDate() + this.jwtConfig.refreshExpiresInDays,
+    );
 
     await this.prisma.refreshToken.create({
       data: {
@@ -79,7 +84,9 @@ export class TokenService {
     context: { ipAddress?: string; userAgent?: string },
   ): Promise<{ userId: string; refreshToken: string }> {
     const tokenHash = this.hashToken(rawToken);
-    const existing = await this.prisma.refreshToken.findUnique({ where: { tokenHash } });
+    const existing = await this.prisma.refreshToken.findUnique({
+      where: { tokenHash },
+    });
 
     if (!existing) {
       throw new UnauthorizedException('Invalid refresh token');
@@ -90,7 +97,9 @@ export class TokenService {
         where: { family: existing.family, revokedAt: null },
         data: { revokedAt: new Date() },
       });
-      throw new UnauthorizedException('Refresh token reuse detected, session revoked');
+      throw new UnauthorizedException(
+        'Refresh token reuse detected, session revoked',
+      );
     }
 
     if (existing.expiresAt < new Date()) {
@@ -99,7 +108,9 @@ export class TokenService {
 
     const newRawToken = randomBytes(64).toString('hex');
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + this.jwtConfig.refreshExpiresInDays);
+    expiresAt.setDate(
+      expiresAt.getDate() + this.jwtConfig.refreshExpiresInDays,
+    );
 
     const newToken = await this.prisma.refreshToken.create({
       data: {
@@ -141,7 +152,9 @@ export class TokenService {
       return 900;
     }
     const value = parseInt(match[1], 10);
-    const multiplier = { s: 1, m: 60, h: 3600, d: 86400 }[match[2] as 's' | 'm' | 'h' | 'd'];
+    const multiplier = { s: 1, m: 60, h: 3600, d: 86400 }[
+      match[2] as 's' | 'm' | 'h' | 'd'
+    ];
     return value * multiplier;
   }
 }

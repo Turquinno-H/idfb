@@ -1,7 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma, StockMovementType } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 
 type StockItemEntity = Prisma.StockItemGetPayload<{
   include: { product: { include: { unit: true } }; warehouse: true };
@@ -60,7 +68,12 @@ export class InventoryService {
     const signedQuantity = incoming ? input.quantity : -input.quantity;
 
     const stockItem = await client.stockItem.findUnique({
-      where: { warehouseId_productId: { warehouseId: input.warehouseId, productId: input.productId } },
+      where: {
+        warehouseId_productId: {
+          warehouseId: input.warehouseId,
+          productId: input.productId,
+        },
+      },
     });
 
     const currentQty = stockItem ? Number(stockItem.quantityOnHand) : 0;
@@ -77,12 +90,18 @@ export class InventoryService {
       const newQty = currentQty + input.quantity;
       newAvgCost =
         newQty > 0
-          ? (currentQty * currentAvgCost + input.quantity * input.unitCost) / newQty
+          ? (currentQty * currentAvgCost + input.quantity * input.unitCost) /
+            newQty
           : input.unitCost;
     }
 
     await client.stockItem.upsert({
-      where: { warehouseId_productId: { warehouseId: input.warehouseId, productId: input.productId } },
+      where: {
+        warehouseId_productId: {
+          warehouseId: input.warehouseId,
+          productId: input.productId,
+        },
+      },
       create: {
         companyId: input.companyId,
         warehouseId: input.warehouseId,
@@ -92,7 +111,9 @@ export class InventoryService {
       },
       update: {
         quantityOnHand: { increment: signedQuantity },
-        ...(incoming && input.unitCost !== undefined ? { averageCost: newAvgCost } : {}),
+        ...(incoming && input.unitCost !== undefined
+          ? { averageCost: newAvgCost }
+          : {}),
       },
     });
 
@@ -179,12 +200,19 @@ export class InventoryService {
       userId?: string;
     },
   ): Promise<{ success: true }> {
-    await this.assertProductAndWarehouse(companyId, input.productId, input.warehouseId);
+    await this.assertProductAndWarehouse(
+      companyId,
+      input.productId,
+      input.warehouseId,
+    );
     await this.applyMovement({
       companyId,
       warehouseId: input.warehouseId,
       productId: input.productId,
-      type: input.direction === 'IN' ? StockMovementType.ADJUSTMENT_IN : StockMovementType.ADJUSTMENT_OUT,
+      type:
+        input.direction === 'IN'
+          ? StockMovementType.ADJUSTMENT_IN
+          : StockMovementType.ADJUSTMENT_OUT,
       quantity: input.quantity,
       unitCost: input.unitCost,
       referenceType: 'MANUAL_ADJUSTMENT',
@@ -206,15 +234,28 @@ export class InventoryService {
     },
   ): Promise<{ success: true; stockTransferId: string }> {
     if (input.fromWarehouseId === input.toWarehouseId) {
-      throw new BadRequestException('Source and destination warehouses must differ');
+      throw new BadRequestException(
+        'Source and destination warehouses must differ',
+      );
     }
-    await this.assertProductAndWarehouse(companyId, input.productId, input.fromWarehouseId);
-    await this.assertProductAndWarehouse(companyId, input.productId, input.toWarehouseId);
+    await this.assertProductAndWarehouse(
+      companyId,
+      input.productId,
+      input.fromWarehouseId,
+    );
+    await this.assertProductAndWarehouse(
+      companyId,
+      input.productId,
+      input.toWarehouseId,
+    );
 
     return this.prisma.$transaction(async (tx) => {
       const sourceStock = await tx.stockItem.findUnique({
         where: {
-          warehouseId_productId: { warehouseId: input.fromWarehouseId, productId: input.productId },
+          warehouseId_productId: {
+            warehouseId: input.fromWarehouseId,
+            productId: input.productId,
+          },
         },
       });
       const unitCost = sourceStock ? Number(sourceStock.averageCost) : 0;
@@ -227,7 +268,9 @@ export class InventoryService {
           status: 'COMPLETED',
           note: input.note,
           createdByUserId: input.userId,
-          lines: { create: [{ productId: input.productId, quantity: input.quantity }] },
+          lines: {
+            create: [{ productId: input.productId, quantity: input.quantity }],
+          },
         },
       });
 
@@ -272,7 +315,9 @@ export class InventoryService {
   ): Promise<void> {
     const [product, warehouse] = await this.prisma.$transaction([
       this.prisma.product.findFirst({ where: { id: productId, companyId } }),
-      this.prisma.warehouse.findFirst({ where: { id: warehouseId, companyId } }),
+      this.prisma.warehouse.findFirst({
+        where: { id: warehouseId, companyId },
+      }),
     ]);
     if (!product) {
       throw new NotFoundException('Product not found');

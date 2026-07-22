@@ -38,7 +38,10 @@ export class SettingsController {
   @RequirePermissions({ resource: 'settings', action: 'update' })
   @Audit('update', 'Company')
   @ApiOperation({ summary: 'Update the company profile' })
-  updateCompany(@TenantCompanyId() companyId: string, @Body() dto: UpdateCompanyProfileDto) {
+  updateCompany(
+    @TenantCompanyId() companyId: string,
+    @Body() dto: UpdateCompanyProfileDto,
+  ) {
     return this.service.updateCompanyProfile(companyId, dto);
   }
 

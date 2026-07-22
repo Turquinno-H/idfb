@@ -1,11 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { nextDocumentNumber } from '../../common/util/document-number';
 import { CreateSupplierDto, UpdateSupplierDto } from './dto/supplier.dto';
 
-type SupplierEntity = Prisma.SupplierGetPayload<{ include: { currency: true } }>;
+type SupplierEntity = Prisma.SupplierGetPayload<{
+  include: { currency: true };
+}>;
 
 const SUPPLIER_INCLUDE = { currency: true } satisfies Prisma.SupplierInclude;
 
@@ -13,7 +19,10 @@ const SUPPLIER_INCLUDE = { currency: true } satisfies Prisma.SupplierInclude;
 export class SuppliersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async resolveCurrencyId(companyId: string, currencyId?: string): Promise<string> {
+  private async resolveCurrencyId(
+    companyId: string,
+    currencyId?: string,
+  ): Promise<string> {
     if (currencyId) {
       return currencyId;
     }
@@ -24,8 +33,13 @@ export class SuppliersService {
     return company.baseCurrencyId;
   }
 
-  async create(companyId: string, dto: CreateSupplierDto): Promise<SupplierEntity> {
-    const code = dto.code ?? (await nextDocumentNumber(this.prisma.supplier, companyId, 'TED'));
+  async create(
+    companyId: string,
+    dto: CreateSupplierDto,
+  ): Promise<SupplierEntity> {
+    const code =
+      dto.code ??
+      (await nextDocumentNumber(this.prisma.supplier, companyId, 'TED'));
     const currencyId = await this.resolveCurrencyId(companyId, dto.currencyId);
 
     return this.prisma.supplier.create({
@@ -89,7 +103,10 @@ export class SuppliersService {
     return supplier;
   }
 
-  async getStatement(companyId: string, id: string): Promise<{
+  async getStatement(
+    companyId: string,
+    id: string,
+  ): Promise<{
     supplierId: string;
     invoiceTotal: number;
     paidTotal: number;
@@ -111,10 +128,19 @@ export class SuppliersService {
     const invoiceTotal = Number(invoiceAgg._sum.total ?? 0);
     const paidTotal = Number(paymentAgg._sum.amount ?? 0);
 
-    return { supplierId: id, invoiceTotal, paidTotal, balance: invoiceTotal - paidTotal };
+    return {
+      supplierId: id,
+      invoiceTotal,
+      paidTotal,
+      balance: invoiceTotal - paidTotal,
+    };
   }
 
-  async update(companyId: string, id: string, dto: UpdateSupplierDto): Promise<SupplierEntity> {
+  async update(
+    companyId: string,
+    id: string,
+    dto: UpdateSupplierDto,
+  ): Promise<SupplierEntity> {
     await this.findOne(companyId, id);
     return this.prisma.supplier.update({
       where: { id },
@@ -137,6 +163,9 @@ export class SuppliersService {
 
   async remove(companyId: string, id: string): Promise<SupplierEntity> {
     await this.findOne(companyId, id);
-    return this.prisma.supplier.delete({ where: { id }, include: SUPPLIER_INCLUDE });
+    return this.prisma.supplier.delete({
+      where: { id },
+      include: SUPPLIER_INCLUDE,
+    });
   }
 }

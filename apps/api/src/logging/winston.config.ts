@@ -9,7 +9,10 @@ export function createWinstonLogger(nodeEnv: string): winston.LoggerOptions {
     transports: [
       new winston.transports.Console({
         format: isProduction
-          ? winston.format.combine(winston.format.timestamp(), winston.format.json())
+          ? winston.format.combine(
+              winston.format.timestamp(),
+              winston.format.json(),
+            )
           : winston.format.combine(
               winston.format.timestamp(),
               winston.format.ms(),
@@ -22,13 +25,19 @@ export function createWinstonLogger(nodeEnv: string): winston.LoggerOptions {
       new winston.transports.File({
         filename: 'logs/error.log',
         level: 'error',
-        format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+        format: winston.format.combine(
+          winston.format.timestamp(),
+          winston.format.json(),
+        ),
         maxsize: 10 * 1024 * 1024,
         maxFiles: 5,
       }),
       new winston.transports.File({
         filename: 'logs/combined.log',
-        format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+        format: winston.format.combine(
+          winston.format.timestamp(),
+          winston.format.json(),
+        ),
         maxsize: 10 * 1024 * 1024,
         maxFiles: 5,
       }),

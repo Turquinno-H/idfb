@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { AuthService } from './auth.service';
@@ -23,7 +31,9 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  @ApiOperation({ summary: 'Register a new company and its first administrator user' })
+  @ApiOperation({
+    summary: 'Register a new company and its first administrator user',
+  })
   register(@Body() dto: RegisterDto, @Req() req: Request): Promise<TokenPair> {
     return this.authService.register(dto, this.context(req));
   }
@@ -42,21 +52,32 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Rotate the refresh token and obtain a new access token' })
-  refresh(@Body() dto: RefreshTokenDto, @Req() req: Request): Promise<TokenPair> {
+  @ApiOperation({
+    summary: 'Rotate the refresh token and obtain a new access token',
+  })
+  refresh(
+    @Body() dto: RefreshTokenDto,
+    @Req() req: Request,
+  ): Promise<TokenPair> {
     return this.authService.refresh(dto.refreshToken, this.context(req));
   }
 
   @ApiBearerAuth()
   @Post('switch-company')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Switch the active company context for a multi-company account' })
+  @ApiOperation({
+    summary: 'Switch the active company context for a multi-company account',
+  })
   switchCompany(
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: SwitchCompanyDto,
     @Req() req: Request,
   ): Promise<TokenPair> {
-    return this.authService.switchCompany(user.userId, dto.companyId, this.context(req));
+    return this.authService.switchCompany(
+      user.userId,
+      dto.companyId,
+      this.context(req),
+    );
   }
 
   @Public()
@@ -70,7 +91,9 @@ export class AuthController {
   @ApiBearerAuth()
   @Post('change-password')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Change the current user password and revoke all sessions' })
+  @ApiOperation({
+    summary: 'Change the current user password and revoke all sessions',
+  })
   async changePassword(
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: ChangePasswordDto,
@@ -80,7 +103,9 @@ export class AuthController {
 
   @ApiBearerAuth()
   @Get('me')
-  @ApiOperation({ summary: 'Return the authenticated user profile and permission set' })
+  @ApiOperation({
+    summary: 'Return the authenticated user profile and permission set',
+  })
   me(@CurrentUser() user: AuthenticatedUser): AuthenticatedUser {
     return user;
   }

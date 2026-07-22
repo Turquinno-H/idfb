@@ -1,25 +1,41 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { resolveCompanyCurrency } from '../../common/util/company-currency';
 import { CreateExpenseDto, CreateIncomeDto } from './dto/finance.dto';
 
-type ExpenseEntity = Prisma.ExpenseGetPayload<{ include: { expenseCategory: true; currency: true } }>;
-type IncomeEntity = Prisma.IncomeGetPayload<{ include: { incomeCategory: true; currency: true } }>;
+type ExpenseEntity = Prisma.ExpenseGetPayload<{
+  include: { expenseCategory: true; currency: true };
+}>;
+type IncomeEntity = Prisma.IncomeGetPayload<{
+  include: { incomeCategory: true; currency: true };
+}>;
 
 @Injectable()
 export class ExpensesIncomeService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createExpense(companyId: string, userId: string, dto: CreateExpenseDto): Promise<ExpenseEntity> {
+  async createExpense(
+    companyId: string,
+    userId: string,
+    dto: CreateExpenseDto,
+  ): Promise<ExpenseEntity> {
     const category = await this.prisma.expenseCategory.findFirst({
       where: { id: dto.expenseCategoryId, companyId },
     });
     if (!category) {
       throw new NotFoundException('Expense category not found');
     }
-    const currencyId = await resolveCompanyCurrency(this.prisma, companyId, dto.currencyId);
+    const currencyId = await resolveCompanyCurrency(
+      this.prisma,
+      companyId,
+      dto.currencyId,
+    );
     return this.prisma.expense.create({
       data: {
         companyId,
@@ -44,7 +60,9 @@ export class ExpensesIncomeService {
   ): Promise<PaginatedResult<ExpenseEntity>> {
     const where: Prisma.ExpenseWhereInput = {
       companyId,
-      ...(query.search ? { description: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { description: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.expense.findMany({
@@ -59,14 +77,22 @@ export class ExpensesIncomeService {
     return paginate(data, total, query.page, query.limit);
   }
 
-  async createIncome(companyId: string, userId: string, dto: CreateIncomeDto): Promise<IncomeEntity> {
+  async createIncome(
+    companyId: string,
+    userId: string,
+    dto: CreateIncomeDto,
+  ): Promise<IncomeEntity> {
     const category = await this.prisma.incomeCategory.findFirst({
       where: { id: dto.incomeCategoryId, companyId },
     });
     if (!category) {
       throw new NotFoundException('Income category not found');
     }
-    const currencyId = await resolveCompanyCurrency(this.prisma, companyId, dto.currencyId);
+    const currencyId = await resolveCompanyCurrency(
+      this.prisma,
+      companyId,
+      dto.currencyId,
+    );
     return this.prisma.income.create({
       data: {
         companyId,
@@ -90,7 +116,9 @@ export class ExpensesIncomeService {
   ): Promise<PaginatedResult<IncomeEntity>> {
     const where: Prisma.IncomeWhereInput = {
       companyId,
-      ...(query.search ? { description: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { description: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.income.findMany({

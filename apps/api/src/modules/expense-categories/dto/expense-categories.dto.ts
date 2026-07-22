@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsOptional, IsUUID, IsNumber, IsEnum, Min, Max, MaxLength } from 'class-validator';
+import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 
 export class CreateExpenseCategoryDto {
-  @ApiProperty({ example: "Kira" })
+  @ApiProperty({ example: 'Kira' })
   @IsString()
   @MaxLength(150)
   name!: string;
@@ -13,4 +13,6 @@ export class CreateExpenseCategoryDto {
   parentId?: string;
 }
 
-export class UpdateExpenseCategoryDto extends PartialType(CreateExpenseCategoryDto) {}
+export class UpdateExpenseCategoryDto extends PartialType(
+  CreateExpenseCategoryDto,
+) {}

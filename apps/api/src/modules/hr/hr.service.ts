@@ -1,7 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PayrollStatus, Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { nextDocumentNumber } from '../../common/util/document-number';
 import { resolveCompanyCurrency } from '../../common/util/company-currency';
 import { calculatePayroll } from './payroll-calculator';
@@ -33,7 +41,10 @@ export class HrService {
 
   // ---- Employees ----
 
-  async createEmployee(companyId: string, dto: CreateEmployeeDto): Promise<EmployeeEntity> {
+  async createEmployee(
+    companyId: string,
+    dto: CreateEmployeeDto,
+  ): Promise<EmployeeEntity> {
     const employeeNumber =
       dto.employeeNumber ??
       (await nextDocumentNumber(
@@ -43,7 +54,11 @@ export class HrService {
         companyId,
         'PER',
       ));
-    const currencyId = await resolveCompanyCurrency(this.prisma, companyId, dto.currencyId);
+    const currencyId = await resolveCompanyCurrency(
+      this.prisma,
+      companyId,
+      dto.currencyId,
+    );
 
     return this.prisma.employee.create({
       data: {
@@ -76,7 +91,9 @@ export class HrService {
             OR: [
               { firstName: { contains: query.search, mode: 'insensitive' } },
               { lastName: { contains: query.search, mode: 'insensitive' } },
-              { employeeNumber: { contains: query.search, mode: 'insensitive' } },
+              {
+                employeeNumber: { contains: query.search, mode: 'insensitive' },
+              },
             ],
           }
         : {}),
@@ -156,7 +173,9 @@ export class HrService {
       where: { employeeId_period: { employeeId: dto.employeeId, period } },
     });
     if (existing) {
-      throw new BadRequestException('Payroll for this employee and period already exists');
+      throw new BadRequestException(
+        'Payroll for this employee and period already exists',
+      );
     }
 
     return this.prisma.payroll.create({
@@ -181,7 +200,9 @@ export class HrService {
   async listPayrolls(
     companyId: string,
     query: PaginationQueryDto,
-  ): Promise<PaginatedResult<Prisma.PayrollGetPayload<{ include: { employee: true } }>>> {
+  ): Promise<
+    PaginatedResult<Prisma.PayrollGetPayload<{ include: { employee: true } }>>
+  > {
     const where: Prisma.PayrollWhereInput = { companyId };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.payroll.findMany({
@@ -200,7 +221,9 @@ export class HrService {
     companyId: string,
     id: string,
   ): Promise<Prisma.PayrollGetPayload<{ include: { employee: true } }>> {
-    const payroll = await this.prisma.payroll.findFirst({ where: { id, companyId } });
+    const payroll = await this.prisma.payroll.findFirst({
+      where: { id, companyId },
+    });
     if (!payroll) {
       throw new NotFoundException('Payroll not found');
     }
@@ -248,7 +271,9 @@ export class HrService {
     companyId: string,
     employeeId: string,
     query: PaginationQueryDto,
-  ): Promise<PaginatedResult<Prisma.AttendanceGetPayload<Record<string, never>>>> {
+  ): Promise<
+    PaginatedResult<Prisma.AttendanceGetPayload<Record<string, never>>>
+  > {
     const where: Prisma.AttendanceWhereInput = { companyId, employeeId };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.attendance.findMany({

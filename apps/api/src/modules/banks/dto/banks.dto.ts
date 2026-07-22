@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsOptional, IsUUID, IsNumber, IsEnum, Min, Max, MaxLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateBankDto {
-  @ApiProperty({ example: "Ziraat Bankası" })
+  @ApiProperty({ example: 'Ziraat Bankası' })
   @IsString()
   @MaxLength(150)
   name!: string;

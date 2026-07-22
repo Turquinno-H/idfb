@@ -1,11 +1,26 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { EDocumentProfile, EDocumentStatus, Prisma, WaybillDirection } from '@idfb/database';
+import {
+  EDocumentProfile,
+  EDocumentStatus,
+  Prisma,
+  WaybillDirection,
+} from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { IssueEInvoiceDto, IssueEWaybillDto } from './dto/e-documents.dto';
 
-type EInvoiceEntity = Prisma.EInvoiceGetPayload<{ include: { salesInvoice: true } }>;
+type EInvoiceEntity = Prisma.EInvoiceGetPayload<{
+  include: { salesInvoice: true };
+}>;
 type EWaybillEntity = Prisma.EWaybillGetPayload<{ include: { waybill: true } }>;
 
 /**
@@ -19,7 +34,10 @@ type EWaybillEntity = Prisma.EWaybillGetPayload<{ include: { waybill: true } }>;
 export class EDocumentsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async issueEInvoice(companyId: string, dto: IssueEInvoiceDto): Promise<EInvoiceEntity> {
+  async issueEInvoice(
+    companyId: string,
+    dto: IssueEInvoiceDto,
+  ): Promise<EInvoiceEntity> {
     const invoice = await this.prisma.salesInvoice.findFirst({
       where: { id: dto.salesInvoiceId, companyId },
     });
@@ -31,7 +49,9 @@ export class EDocumentsService {
       where: { salesInvoiceId: dto.salesInvoiceId },
     });
     if (existing) {
-      throw new BadRequestException('An e-document already exists for this invoice');
+      throw new BadRequestException(
+        'An e-document already exists for this invoice',
+      );
     }
 
     return this.prisma.eInvoice.create({
@@ -77,7 +97,9 @@ export class EDocumentsService {
   async cancelEInvoice(companyId: string, id: string): Promise<EInvoiceEntity> {
     const eInvoice = await this.getEInvoice(companyId, id);
     if (eInvoice.status === EDocumentStatus.ACCEPTED) {
-      throw new BadRequestException('Accepted e-invoices cannot be cancelled locally');
+      throw new BadRequestException(
+        'Accepted e-invoices cannot be cancelled locally',
+      );
     }
     await this.prisma.eInvoice.update({
       where: { id },
@@ -86,7 +108,10 @@ export class EDocumentsService {
     return this.getEInvoice(companyId, id);
   }
 
-  async issueEWaybill(companyId: string, dto: IssueEWaybillDto): Promise<EWaybillEntity> {
+  async issueEWaybill(
+    companyId: string,
+    dto: IssueEWaybillDto,
+  ): Promise<EWaybillEntity> {
     const waybill = await this.prisma.waybill.findFirst({
       where: { id: dto.waybillId, companyId },
     });
@@ -94,11 +119,17 @@ export class EDocumentsService {
       throw new NotFoundException('Waybill not found');
     }
     if (waybill.direction !== WaybillDirection.OUTBOUND) {
-      throw new BadRequestException('Only outbound waybills can be issued as e-waybills');
+      throw new BadRequestException(
+        'Only outbound waybills can be issued as e-waybills',
+      );
     }
-    const existing = await this.prisma.eWaybill.findUnique({ where: { waybillId: dto.waybillId } });
+    const existing = await this.prisma.eWaybill.findUnique({
+      where: { waybillId: dto.waybillId },
+    });
     if (existing) {
-      throw new BadRequestException('An e-waybill already exists for this waybill');
+      throw new BadRequestException(
+        'An e-waybill already exists for this waybill',
+      );
     }
 
     return this.prisma.eWaybill.create({

@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsObject, IsOptional, IsString, MaxLength } from 'class-validator';
+import {
+  IsEmail,
+  IsObject,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 export class UpsertSettingDto {
   @ApiProperty({ example: 'invoice.footerText' })
@@ -7,7 +13,10 @@ export class UpsertSettingDto {
   @MaxLength(150)
   key!: string;
 
-  @ApiProperty({ description: 'Arbitrary JSON value', example: { note: 'Teşekkür ederiz' } })
+  @ApiProperty({
+    description: 'Arbitrary JSON value',
+    example: { note: 'Teşekkür ederiz' },
+  })
   @IsObject()
   value!: Record<string, unknown>;
 }

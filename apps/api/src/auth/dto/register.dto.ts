@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class RegisterDto {
   @ApiProperty({ example: 'ayse@firma.com.tr' })
@@ -11,7 +17,8 @@ export class RegisterDto {
   @MinLength(8)
   @MaxLength(128)
   @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-    message: 'password must contain at least one uppercase letter, one lowercase letter and one number',
+    message:
+      'password must contain at least one uppercase letter, one lowercase letter and one number',
   })
   password!: string;
 
@@ -32,6 +39,8 @@ export class RegisterDto {
 
   @ApiProperty({ example: '1234567890' })
   @IsString()
-  @Matches(/^\d{10,11}$/, { message: 'taxNumber must be a valid Turkish tax/national identity number' })
+  @Matches(/^\d{10,11}$/, {
+    message: 'taxNumber must be a valid Turkish tax/national identity number',
+  })
   taxNumber!: string;
 }

@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, BankTransactionType } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { resolveCompanyCurrency } from '../../common/util/company-currency';
 import {
   CreateBankAccountDto,
@@ -11,7 +15,9 @@ import {
   UpdateCashAccountDto,
 } from './dto/finance.dto';
 
-type CashAccountEntity = Prisma.CashAccountGetPayload<{ include: { currency: true; branch: true } }>;
+type CashAccountEntity = Prisma.CashAccountGetPayload<{
+  include: { currency: true; branch: true };
+}>;
 type BankAccountEntity = Prisma.BankAccountGetPayload<{
   include: { currency: true; bank: true; branch: true };
 }>;
@@ -28,8 +34,15 @@ export class AccountsService {
 
   // ---- Cash accounts ----
 
-  async createCashAccount(companyId: string, dto: CreateCashAccountDto): Promise<CashAccountEntity> {
-    const currencyId = await resolveCompanyCurrency(this.prisma, companyId, dto.currencyId);
+  async createCashAccount(
+    companyId: string,
+    dto: CreateCashAccountDto,
+  ): Promise<CashAccountEntity> {
+    const currencyId = await resolveCompanyCurrency(
+      this.prisma,
+      companyId,
+      dto.currencyId,
+    );
     return this.prisma.cashAccount.create({
       data: {
         companyId,
@@ -48,7 +61,9 @@ export class AccountsService {
   ): Promise<PaginatedResult<CashAccountEntity>> {
     const where: Prisma.CashAccountWhereInput = {
       companyId,
-      ...(query.search ? { name: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { name: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.cashAccount.findMany({
@@ -67,16 +82,31 @@ export class AccountsService {
     companyId: string,
     id: string,
   ): Promise<{ cashAccountId: string; balance: number }> {
-    const account = await this.prisma.cashAccount.findFirst({ where: { id, companyId } });
+    const account = await this.prisma.cashAccount.findFirst({
+      where: { id, companyId },
+    });
     if (!account) {
       throw new NotFoundException('Cash account not found');
     }
-    const [collections, incomes, payments, expenses] = await this.prisma.$transaction([
-      this.prisma.collection.aggregate({ where: { cashAccountId: id }, _sum: { amount: true } }),
-      this.prisma.income.aggregate({ where: { cashAccountId: id }, _sum: { amount: true } }),
-      this.prisma.payment.aggregate({ where: { cashAccountId: id }, _sum: { amount: true } }),
-      this.prisma.expense.aggregate({ where: { cashAccountId: id }, _sum: { amount: true } }),
-    ]);
+    const [collections, incomes, payments, expenses] =
+      await this.prisma.$transaction([
+        this.prisma.collection.aggregate({
+          where: { cashAccountId: id },
+          _sum: { amount: true },
+        }),
+        this.prisma.income.aggregate({
+          where: { cashAccountId: id },
+          _sum: { amount: true },
+        }),
+        this.prisma.payment.aggregate({
+          where: { cashAccountId: id },
+          _sum: { amount: true },
+        }),
+        this.prisma.expense.aggregate({
+          where: { cashAccountId: id },
+          _sum: { amount: true },
+        }),
+      ]);
     const balance =
       Number(account.openingBalance) +
       Number(collections._sum.amount ?? 0) +
@@ -91,7 +121,9 @@ export class AccountsService {
     id: string,
     dto: UpdateCashAccountDto,
   ): Promise<CashAccountEntity> {
-    const account = await this.prisma.cashAccount.findFirst({ where: { id, companyId } });
+    const account = await this.prisma.cashAccount.findFirst({
+      where: { id, companyId },
+    });
     if (!account) {
       throw new NotFoundException('Cash account not found');
     }
@@ -109,12 +141,21 @@ export class AccountsService {
 
   // ---- Bank accounts ----
 
-  async createBankAccount(companyId: string, dto: CreateBankAccountDto): Promise<BankAccountEntity> {
-    const bank = await this.prisma.bank.findFirst({ where: { id: dto.bankId, companyId } });
+  async createBankAccount(
+    companyId: string,
+    dto: CreateBankAccountDto,
+  ): Promise<BankAccountEntity> {
+    const bank = await this.prisma.bank.findFirst({
+      where: { id: dto.bankId, companyId },
+    });
     if (!bank) {
       throw new NotFoundException('Bank not found');
     }
-    const currencyId = await resolveCompanyCurrency(this.prisma, companyId, dto.currencyId);
+    const currencyId = await resolveCompanyCurrency(
+      this.prisma,
+      companyId,
+      dto.currencyId,
+    );
     return this.prisma.bankAccount.create({
       data: {
         companyId,
@@ -135,7 +176,9 @@ export class AccountsService {
   ): Promise<PaginatedResult<BankAccountEntity>> {
     const where: Prisma.BankAccountWhereInput = {
       companyId,
-      ...(query.search ? { iban: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { iban: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.bankAccount.findMany({
@@ -155,7 +198,9 @@ export class AccountsService {
     id: string,
     dto: UpdateBankAccountDto,
   ): Promise<BankAccountEntity> {
-    const account = await this.prisma.bankAccount.findFirst({ where: { id, companyId } });
+    const account = await this.prisma.bankAccount.findFirst({
+      where: { id, companyId },
+    });
     if (!account) {
       throw new NotFoundException('Bank account not found');
     }
@@ -191,7 +236,9 @@ export class AccountsService {
         bankAccountId: dto.bankAccountId,
         type: dto.type,
         amount: dto.amount,
-        transactionDate: dto.transactionDate ? new Date(dto.transactionDate) : undefined,
+        transactionDate: dto.transactionDate
+          ? new Date(dto.transactionDate)
+          : undefined,
         description: dto.description,
         reference: dto.reference,
       },
@@ -202,8 +249,13 @@ export class AccountsService {
     companyId: string,
     bankAccountId: string,
     query: PaginationQueryDto,
-  ): Promise<PaginatedResult<Prisma.BankTransactionGetPayload<Record<string, never>>>> {
-    const where: Prisma.BankTransactionWhereInput = { companyId, bankAccountId };
+  ): Promise<
+    PaginatedResult<Prisma.BankTransactionGetPayload<Record<string, never>>>
+  > {
+    const where: Prisma.BankTransactionWhereInput = {
+      companyId,
+      bankAccountId,
+    };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.bankTransaction.findMany({
         where,
@@ -220,7 +272,9 @@ export class AccountsService {
     companyId: string,
     id: string,
   ): Promise<{ bankAccountId: string; balance: number }> {
-    const account = await this.prisma.bankAccount.findFirst({ where: { id, companyId } });
+    const account = await this.prisma.bankAccount.findFirst({
+      where: { id, companyId },
+    });
     if (!account) {
       throw new NotFoundException('Bank account not found');
     }

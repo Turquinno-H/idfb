@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { QuotationStatus } from '@idfb/database';
 import { QuotationsService } from './quotations.service';
@@ -31,14 +41,20 @@ export class QuotationsController {
   @Get()
   @RequirePermissions({ resource: 'quotation', action: 'read' })
   @ApiOperation({ summary: 'List quotations' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'quotation', action: 'read' })
   @ApiOperation({ summary: 'Get a quotation by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.findOne(companyId, id);
   }
 
@@ -58,7 +74,10 @@ export class QuotationsController {
   @RequirePermissions({ resource: 'quotation', action: 'update' })
   @Audit('send', 'Quotation')
   @ApiOperation({ summary: 'Mark a quotation as sent' })
-  send(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  send(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.setStatus(companyId, id, QuotationStatus.SENT);
   }
 
@@ -66,7 +85,10 @@ export class QuotationsController {
   @RequirePermissions({ resource: 'quotation', action: 'approve' })
   @Audit('accept', 'Quotation')
   @ApiOperation({ summary: 'Mark a quotation as accepted' })
-  accept(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  accept(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.setStatus(companyId, id, QuotationStatus.ACCEPTED);
   }
 
@@ -74,7 +96,10 @@ export class QuotationsController {
   @RequirePermissions({ resource: 'quotation', action: 'update' })
   @Audit('reject', 'Quotation')
   @ApiOperation({ summary: 'Mark a quotation as rejected' })
-  reject(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  reject(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.setStatus(companyId, id, QuotationStatus.REJECTED);
   }
 
@@ -82,7 +107,10 @@ export class QuotationsController {
   @RequirePermissions({ resource: 'quotation', action: 'delete' })
   @Audit('delete', 'Quotation')
   @ApiOperation({ summary: 'Delete a quotation' })
-  remove(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  remove(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.remove(companyId, id);
   }
 }

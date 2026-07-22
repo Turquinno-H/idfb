@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
 import { EDocumentProfile } from '@idfb/database';
 
 export class IssueEInvoiceDto {
@@ -7,7 +13,10 @@ export class IssueEInvoiceDto {
   @IsUUID()
   salesInvoiceId!: string;
 
-  @ApiPropertyOptional({ enum: EDocumentProfile, default: EDocumentProfile.TEMEL_FATURA })
+  @ApiPropertyOptional({
+    enum: EDocumentProfile,
+    default: EDocumentProfile.TEMEL_FATURA,
+  })
   @IsOptional()
   @IsEnum(EDocumentProfile)
   profileId?: EDocumentProfile;

@@ -1,8 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
-import { CreateExpenseCategoryDto, UpdateExpenseCategoryDto } from './dto/expense-categories.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
+import {
+  CreateExpenseCategoryDto,
+  UpdateExpenseCategoryDto,
+} from './dto/expense-categories.dto';
 
 type Entity = Prisma.ExpenseCategoryGetPayload<Record<string, never>>;
 
@@ -10,7 +17,10 @@ type Entity = Prisma.ExpenseCategoryGetPayload<Record<string, never>>;
 export class ExpenseCategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(companyId: string, dto: CreateExpenseCategoryDto): Promise<Entity> {
+  async create(
+    companyId: string,
+    dto: CreateExpenseCategoryDto,
+  ): Promise<Entity> {
     return this.prisma.expenseCategory.create({
       data: {
         companyId,
@@ -20,10 +30,15 @@ export class ExpenseCategoriesService {
     });
   }
 
-  async findAll(companyId: string, query: PaginationQueryDto): Promise<PaginatedResult<Entity>> {
+  async findAll(
+    companyId: string,
+    query: PaginationQueryDto,
+  ): Promise<PaginatedResult<Entity>> {
     const where: Prisma.ExpenseCategoryWhereInput = {
       companyId,
-      ...(query.search ? { name: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { name: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.expenseCategory.findMany({
@@ -38,14 +53,20 @@ export class ExpenseCategoriesService {
   }
 
   async findOne(companyId: string, id: string): Promise<Entity> {
-    const entity = await this.prisma.expenseCategory.findFirst({ where: { id, companyId } });
+    const entity = await this.prisma.expenseCategory.findFirst({
+      where: { id, companyId },
+    });
     if (!entity) {
       throw new NotFoundException('ExpenseCategory not found');
     }
     return entity;
   }
 
-  async update(companyId: string, id: string, dto: UpdateExpenseCategoryDto): Promise<Entity> {
+  async update(
+    companyId: string,
+    id: string,
+    dto: UpdateExpenseCategoryDto,
+  ): Promise<Entity> {
     await this.findOne(companyId, id);
     return this.prisma.expenseCategory.update({ where: { id }, data: dto });
   }

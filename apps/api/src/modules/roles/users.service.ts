@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { randomBytes } from 'node:crypto';
 import { Prisma } from '@idfb/database';
@@ -40,7 +44,9 @@ export class UsersService {
       where: { companyId, id: { in: dto.roleIds } },
     });
     if (roles.length !== new Set(dto.roleIds).size) {
-      throw new BadRequestException('One or more role ids are invalid for this company');
+      throw new BadRequestException(
+        'One or more role ids are invalid for this company',
+      );
     }
 
     const temporaryPassword = randomBytes(12).toString('base64url');
@@ -62,7 +68,9 @@ export class UsersService {
         where: { companyId_userId: { companyId, userId: user.id } },
       });
       if (existingMember) {
-        throw new BadRequestException('User is already a member of this company');
+        throw new BadRequestException(
+          'User is already a member of this company',
+        );
       }
 
       const created = await tx.companyMember.create({
@@ -90,7 +98,11 @@ export class UsersService {
     return member;
   }
 
-  async assignRoles(companyId: string, memberId: string, dto: AssignRolesDto): Promise<MemberEntity> {
+  async assignRoles(
+    companyId: string,
+    memberId: string,
+    dto: AssignRolesDto,
+  ): Promise<MemberEntity> {
     const member = await this.prisma.companyMember.findFirst({
       where: { id: memberId, companyId },
     });
@@ -101,13 +113,18 @@ export class UsersService {
       where: { companyId, id: { in: dto.roleIds } },
     });
     if (roles.length !== new Set(dto.roleIds).size) {
-      throw new BadRequestException('One or more role ids are invalid for this company');
+      throw new BadRequestException(
+        'One or more role ids are invalid for this company',
+      );
     }
 
     return this.prisma.$transaction(async (tx) => {
       await tx.memberRole.deleteMany({ where: { companyMemberId: memberId } });
       await tx.memberRole.createMany({
-        data: dto.roleIds.map((roleId) => ({ companyMemberId: memberId, roleId })),
+        data: dto.roleIds.map((roleId) => ({
+          companyMemberId: memberId,
+          roleId,
+        })),
       });
       return tx.companyMember.findFirstOrThrow({
         where: { id: memberId },

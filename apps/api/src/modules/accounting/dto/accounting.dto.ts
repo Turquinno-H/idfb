@@ -47,13 +47,19 @@ export class JournalEntryLineDto {
   @IsUUID()
   costCenterId?: string;
 
-  @ApiProperty({ example: 1000.0, description: 'Debit amount (0 if this is a credit line)' })
+  @ApiProperty({
+    example: 1000.0,
+    description: 'Debit amount (0 if this is a credit line)',
+  })
   @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 4 })
   @Min(0)
   debit!: number;
 
-  @ApiProperty({ example: 0, description: 'Credit amount (0 if this is a debit line)' })
+  @ApiProperty({
+    example: 0,
+    description: 'Credit amount (0 if this is a debit line)',
+  })
   @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 4 })
   @Min(0)

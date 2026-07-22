@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateCategoryDto {
   @ApiProperty({ example: 'Elektronik' })
@@ -13,7 +19,9 @@ export class CreateCategoryDto {
   @MaxLength(50)
   code?: string;
 
-  @ApiPropertyOptional({ description: 'Parent category id for hierarchical catalogs' })
+  @ApiPropertyOptional({
+    description: 'Parent category id for hierarchical catalogs',
+  })
   @IsOptional()
   @IsUUID()
   parentId?: string;

@@ -40,7 +40,9 @@ export function calculatePayroll(input: {
   const taxableGross = grossSalary + bonuses;
 
   const sgkEmployee = round(taxableGross * SGK_EMPLOYEE_RATE);
-  const unemploymentInsurance = round(taxableGross * UNEMPLOYMENT_EMPLOYEE_RATE);
+  const unemploymentInsurance = round(
+    taxableGross * UNEMPLOYMENT_EMPLOYEE_RATE,
+  );
   const sgkEmployer = round(taxableGross * SGK_EMPLOYER_RATE);
 
   const incomeTaxBase = taxableGross - sgkEmployee - unemploymentInsurance;
@@ -48,7 +50,11 @@ export function calculatePayroll(input: {
   const stampTax = round(taxableGross * STAMP_TAX_RATE);
 
   const totalDeductions = round(
-    sgkEmployee + unemploymentInsurance + incomeTax + stampTax + otherDeductions,
+    sgkEmployee +
+      unemploymentInsurance +
+      incomeTax +
+      stampTax +
+      otherDeductions,
   );
   const netSalary = round(taxableGross - totalDeductions);
 

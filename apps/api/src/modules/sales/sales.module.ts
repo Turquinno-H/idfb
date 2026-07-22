@@ -9,7 +9,11 @@ import { SalesInvoicesService } from './sales-invoices.service';
 
 @Module({
   imports: [InventoryModule],
-  controllers: [QuotationsController, SalesOrdersController, SalesInvoicesController],
+  controllers: [
+    QuotationsController,
+    SalesOrdersController,
+    SalesInvoicesController,
+  ],
   providers: [QuotationsService, SalesOrdersService, SalesInvoicesService],
   exports: [QuotationsService, SalesOrdersService, SalesInvoicesService],
 })

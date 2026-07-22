@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, TaskStatus } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import {
   CreateProjectDto,
   CreateTaskDto,
@@ -18,7 +22,10 @@ export class ProjectsService {
 
   // ---- Projects ----
 
-  async createProject(companyId: string, dto: CreateProjectDto): Promise<ProjectEntity> {
+  async createProject(
+    companyId: string,
+    dto: CreateProjectDto,
+  ): Promise<ProjectEntity> {
     return this.prisma.project.create({
       data: {
         companyId,
@@ -42,7 +49,9 @@ export class ProjectsService {
   ): Promise<PaginatedResult<ProjectEntity>> {
     const where: Prisma.ProjectWhereInput = {
       companyId,
-      ...(query.search ? { name: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { name: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.project.findMany({
@@ -68,7 +77,11 @@ export class ProjectsService {
     return project;
   }
 
-  async updateProject(companyId: string, id: string, dto: UpdateProjectDto): Promise<ProjectEntity> {
+  async updateProject(
+    companyId: string,
+    id: string,
+    dto: UpdateProjectDto,
+  ): Promise<ProjectEntity> {
     await this.getProject(companyId, id);
     return this.prisma.project.update({
       where: { id },
@@ -89,7 +102,10 @@ export class ProjectsService {
 
   async removeProject(companyId: string, id: string): Promise<ProjectEntity> {
     await this.getProject(companyId, id);
-    return this.prisma.project.delete({ where: { id }, include: { customer: true } });
+    return this.prisma.project.delete({
+      where: { id },
+      include: { customer: true },
+    });
   }
 
   // ---- Tasks ----
@@ -126,7 +142,9 @@ export class ProjectsService {
     const where: Prisma.TaskWhereInput = {
       companyId,
       ...(projectId ? { projectId } : {}),
-      ...(query.search ? { title: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { title: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.task.findMany({
@@ -141,13 +159,19 @@ export class ProjectsService {
     return paginate(data, total, query.page, query.limit);
   }
 
-  async updateTask(companyId: string, id: string, dto: UpdateTaskDto): Promise<TaskEntity> {
+  async updateTask(
+    companyId: string,
+    id: string,
+    dto: UpdateTaskDto,
+  ): Promise<TaskEntity> {
     const task = await this.prisma.task.findFirst({ where: { id, companyId } });
     if (!task) {
       throw new NotFoundException('Task not found');
     }
     const completedAt =
-      dto.status === TaskStatus.DONE && task.status !== TaskStatus.DONE ? new Date() : undefined;
+      dto.status === TaskStatus.DONE && task.status !== TaskStatus.DONE
+        ? new Date()
+        : undefined;
     return this.prisma.task.update({
       where: { id },
       data: {
@@ -169,6 +193,9 @@ export class ProjectsService {
     if (!task) {
       throw new NotFoundException('Task not found');
     }
-    return this.prisma.task.delete({ where: { id }, include: { project: true } });
+    return this.prisma.task.delete({
+      where: { id },
+      include: { project: true },
+    });
   }
 }

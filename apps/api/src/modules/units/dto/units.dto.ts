@@ -1,13 +1,13 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsOptional, IsUUID, IsNumber, IsEnum, Min, Max, MaxLength } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateUnitDto {
-  @ApiProperty({ example: "Adet" })
+  @ApiProperty({ example: 'Adet' })
   @IsString()
   @MaxLength(100)
   name!: string;
 
-  @ApiProperty({ example: "ADET" })
+  @ApiProperty({ example: 'ADET' })
   @IsString()
   @MaxLength(20)
   code!: string;

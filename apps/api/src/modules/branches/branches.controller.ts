@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BranchesService } from './branches.service';
 import { CreateBranchDto, UpdateBranchDto } from './dto/branch.dto';
@@ -24,14 +34,20 @@ export class BranchesController {
   @Get()
   @RequirePermissions({ resource: 'branch', action: 'read' })
   @ApiOperation({ summary: 'List branches' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.branchesService.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'branch', action: 'read' })
   @ApiOperation({ summary: 'Get a branch by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.branchesService.findOne(companyId, id);
   }
 
@@ -51,7 +67,10 @@ export class BranchesController {
   @RequirePermissions({ resource: 'branch', action: 'delete' })
   @Audit('delete', 'Branch')
   @ApiOperation({ summary: 'Delete a branch' })
-  remove(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  remove(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.branchesService.remove(companyId, id);
   }
 }

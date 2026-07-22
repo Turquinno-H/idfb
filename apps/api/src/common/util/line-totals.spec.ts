@@ -10,7 +10,12 @@ describe('line-totals', () => {
     });
 
     it('applies a percentage discount before tax', () => {
-      const result = computeLine({ quantity: 2, unitPrice: 100, discountRate: 10, taxRate: 20 });
+      const result = computeLine({
+        quantity: 2,
+        unitPrice: 100,
+        discountRate: 10,
+        taxRate: 20,
+      });
       expect(result.netLineTotal).toBe(180);
       expect(result.taxAmount).toBe(36);
       expect(result.grossLineTotal).toBe(216);

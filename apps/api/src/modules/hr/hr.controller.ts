@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { HrService } from './hr.service';
 import {
@@ -23,21 +32,30 @@ export class HrController {
   @RequirePermissions({ resource: 'employee', action: 'create' })
   @Audit('create', 'Employee')
   @ApiOperation({ summary: 'Create an employee' })
-  createEmployee(@TenantCompanyId() companyId: string, @Body() dto: CreateEmployeeDto) {
+  createEmployee(
+    @TenantCompanyId() companyId: string,
+    @Body() dto: CreateEmployeeDto,
+  ) {
     return this.service.createEmployee(companyId, dto);
   }
 
   @Get('employees')
   @RequirePermissions({ resource: 'employee', action: 'read' })
   @ApiOperation({ summary: 'List employees' })
-  listEmployees(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  listEmployees(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.listEmployees(companyId, query);
   }
 
   @Get('employees/:id')
   @RequirePermissions({ resource: 'employee', action: 'read' })
   @ApiOperation({ summary: 'Get an employee by id' })
-  getEmployee(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  getEmployee(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.getEmployee(companyId, id);
   }
 
@@ -57,15 +75,24 @@ export class HrController {
   @Post('payrolls')
   @RequirePermissions({ resource: 'payroll', action: 'create' })
   @Audit('create', 'Payroll')
-  @ApiOperation({ summary: 'Run payroll for an employee/period (Turkish statutory deductions)' })
-  createPayroll(@TenantCompanyId() companyId: string, @Body() dto: CreatePayrollDto) {
+  @ApiOperation({
+    summary:
+      'Run payroll for an employee/period (Turkish statutory deductions)',
+  })
+  createPayroll(
+    @TenantCompanyId() companyId: string,
+    @Body() dto: CreatePayrollDto,
+  ) {
     return this.service.createPayroll(companyId, dto);
   }
 
   @Get('payrolls')
   @RequirePermissions({ resource: 'payroll', action: 'read' })
   @ApiOperation({ summary: 'List payroll runs' })
-  listPayrolls(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  listPayrolls(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.listPayrolls(companyId, query);
   }
 
@@ -73,7 +100,10 @@ export class HrController {
   @RequirePermissions({ resource: 'payroll', action: 'approve' })
   @Audit('approve', 'Payroll')
   @ApiOperation({ summary: 'Approve a payroll run' })
-  approvePayroll(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  approvePayroll(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.approvePayroll(companyId, id);
   }
 
@@ -82,7 +112,10 @@ export class HrController {
   @RequirePermissions({ resource: 'attendance', action: 'create' })
   @Audit('record', 'Attendance')
   @ApiOperation({ summary: 'Record or update attendance for an employee/day' })
-  recordAttendance(@TenantCompanyId() companyId: string, @Body() dto: CreateAttendanceDto) {
+  recordAttendance(
+    @TenantCompanyId() companyId: string,
+    @Body() dto: CreateAttendanceDto,
+  ) {
     return this.service.recordAttendance(companyId, dto);
   }
 

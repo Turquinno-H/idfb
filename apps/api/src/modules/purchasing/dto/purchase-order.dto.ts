@@ -3,7 +3,6 @@ import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
-  IsInt,
   IsNumber,
   IsOptional,
   IsString,
@@ -59,7 +58,9 @@ export class CreatePurchaseOrderDto {
   @IsUUID()
   branchId?: string;
 
-  @ApiPropertyOptional({ description: 'Currency id; defaults to supplier/company currency' })
+  @ApiPropertyOptional({
+    description: 'Currency id; defaults to supplier/company currency',
+  })
   @IsOptional()
   @IsUUID()
   currencyId?: string;
@@ -83,7 +84,9 @@ export class CreatePurchaseOrderDto {
   lines!: PurchaseOrderLineDto[];
 }
 
-export class UpdatePurchaseOrderDto extends PartialType(CreatePurchaseOrderDto) {}
+export class UpdatePurchaseOrderDto extends PartialType(
+  CreatePurchaseOrderDto,
+) {}
 
 export class ReceivePurchaseOrderLineDto {
   @ApiProperty()
@@ -96,7 +99,9 @@ export class ReceivePurchaseOrderLineDto {
   @Min(0.0001)
   quantity!: number;
 
-  @ApiPropertyOptional({ description: 'Override unit cost; defaults to the order line price' })
+  @ApiPropertyOptional({
+    description: 'Override unit cost; defaults to the order line price',
+  })
   @IsOptional()
   @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 4 })
@@ -105,7 +110,9 @@ export class ReceivePurchaseOrderLineDto {
 }
 
 export class ReceivePurchaseOrderDto {
-  @ApiPropertyOptional({ description: 'Warehouse to receive into; defaults to the order warehouse' })
+  @ApiPropertyOptional({
+    description: 'Warehouse to receive into; defaults to the order warehouse',
+  })
   @IsOptional()
   @IsUUID()
   warehouseId?: string;

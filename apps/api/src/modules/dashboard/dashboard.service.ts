@@ -20,7 +20,12 @@ export interface DashboardSummary {
     paidTotal: number;
     payable: number;
   };
-  lowStock: { productId: string; name: string; onHand: number; minStockLevel: number }[];
+  lowStock: {
+    productId: string;
+    name: string;
+    onHand: number;
+    minStockLevel: number;
+  }[];
 }
 
 @Injectable()
@@ -43,21 +48,33 @@ export class DashboardService {
       this.prisma.supplier.count({ where: { companyId } }),
       this.prisma.product.count({ where: { companyId } }),
       this.prisma.salesOrder.count({
-        where: { companyId, status: { in: ['DRAFT', 'CONFIRMED', 'PARTIALLY_DELIVERED'] } },
+        where: {
+          companyId,
+          status: { in: ['DRAFT', 'CONFIRMED', 'PARTIALLY_DELIVERED'] },
+        },
       }),
       this.prisma.purchaseOrder.count({
-        where: { companyId, status: { in: ['DRAFT', 'CONFIRMED', 'PARTIALLY_RECEIVED', 'SENT'] } },
+        where: {
+          companyId,
+          status: { in: ['DRAFT', 'CONFIRMED', 'PARTIALLY_RECEIVED', 'SENT'] },
+        },
       }),
       this.prisma.salesInvoice.aggregate({
         where: { companyId, status: { not: InvoiceStatus.CANCELLED } },
         _sum: { total: true, paidAmount: true },
       }),
-      this.prisma.collection.aggregate({ where: { companyId }, _sum: { amount: true } }),
+      this.prisma.collection.aggregate({
+        where: { companyId },
+        _sum: { amount: true },
+      }),
       this.prisma.purchaseInvoice.aggregate({
         where: { companyId, status: { not: InvoiceStatus.CANCELLED } },
         _sum: { total: true, paidAmount: true },
       }),
-      this.prisma.payment.aggregate({ where: { companyId }, _sum: { amount: true } }),
+      this.prisma.payment.aggregate({
+        where: { companyId },
+        _sum: { amount: true },
+      }),
     ]);
 
     const salesInvoiceTotal = Number(salesInvoiceAgg._sum.total ?? 0);
@@ -91,18 +108,38 @@ export class DashboardService {
 
   private async getLowStock(
     companyId: string,
-  ): Promise<{ productId: string; name: string; onHand: number; minStockLevel: number }[]> {
+  ): Promise<
+    { productId: string; name: string; onHand: number; minStockLevel: number }[]
+  > {
     const products = await this.prisma.product.findMany({
       where: { companyId, minStockLevel: { not: null }, isActive: true },
-      select: { id: true, name: true, minStockLevel: true, stockItems: { select: { quantityOnHand: true } } },
+      select: {
+        id: true,
+        name: true,
+        minStockLevel: true,
+        stockItems: { select: { quantityOnHand: true } },
+      },
     });
 
-    const rows: { productId: string; name: string; onHand: number; minStockLevel: number }[] = [];
+    const rows: {
+      productId: string;
+      name: string;
+      onHand: number;
+      minStockLevel: number;
+    }[] = [];
     for (const product of products) {
-      const onHand = product.stockItems.reduce((sum, item) => sum + Number(item.quantityOnHand), 0);
+      const onHand = product.stockItems.reduce(
+        (sum, item) => sum + Number(item.quantityOnHand),
+        0,
+      );
       const minLevel = Number(product.minStockLevel);
       if (onHand < minLevel) {
-        rows.push({ productId: product.id, name: product.name, onHand, minStockLevel: minLevel });
+        rows.push({
+          productId: product.id,
+          name: product.name,
+          onHand,
+          minStockLevel: minLevel,
+        });
       }
     }
     return rows.slice(0, 50);
@@ -118,7 +155,11 @@ export class DashboardService {
     since.setHours(0, 0, 0, 0);
 
     const invoices = await this.prisma.salesInvoice.findMany({
-      where: { companyId, status: { not: InvoiceStatus.CANCELLED }, issueDate: { gte: since } },
+      where: {
+        companyId,
+        status: { not: InvoiceStatus.CANCELLED },
+        issueDate: { gte: since },
+      },
       select: { issueDate: true, total: true },
     });
 
@@ -126,7 +167,10 @@ export class DashboardService {
     for (let i = 0; i < months; i += 1) {
       const date = new Date(since);
       date.setMonth(since.getMonth() + i);
-      buckets.set(`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`, 0);
+      buckets.set(
+        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`,
+        0,
+      );
     }
 
     for (const invoice of invoices) {
@@ -134,6 +178,9 @@ export class DashboardService {
       buckets.set(key, (buckets.get(key) ?? 0) + Number(invoice.total));
     }
 
-    return Array.from(buckets.entries()).map(([month, total]) => ({ month, total }));
+    return Array.from(buckets.entries()).map(([month, total]) => ({
+      month,
+      total,
+    }));
   }
 }

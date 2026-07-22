@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CollectionsService } from './collections.service';
 import { CreateCollectionDto } from './dto/finance.dto';
@@ -18,7 +26,9 @@ export class CollectionsController {
   @Post()
   @RequirePermissions({ resource: 'collection', action: 'create' })
   @Audit('create', 'Collection')
-  @ApiOperation({ summary: 'Record a customer collection (updates invoice balance)' })
+  @ApiOperation({
+    summary: 'Record a customer collection (updates invoice balance)',
+  })
   create(
     @TenantCompanyId() companyId: string,
     @CurrentUser() user: AuthenticatedUser,
@@ -30,14 +40,20 @@ export class CollectionsController {
   @Get()
   @RequirePermissions({ resource: 'collection', action: 'read' })
   @ApiOperation({ summary: 'List collections' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'collection', action: 'read' })
   @ApiOperation({ summary: 'Get a collection by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.findOne(companyId, id);
   }
 }

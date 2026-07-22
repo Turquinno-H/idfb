@@ -1,11 +1,25 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
 
 type ProductEntity = Prisma.ProductGetPayload<{
-  include: { category: true; brand: true; unit: true; taxRate: true; currency: true };
+  include: {
+    category: true;
+    brand: true;
+    unit: true;
+    taxRate: true;
+    currency: true;
+  };
 }>;
 
 const PRODUCT_INCLUDE = {
@@ -20,7 +34,10 @@ const PRODUCT_INCLUDE = {
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async resolveCurrencyId(companyId: string, currencyId?: string): Promise<string> {
+  private async resolveCurrencyId(
+    companyId: string,
+    currencyId?: string,
+  ): Promise<string> {
     if (currencyId) {
       return currencyId;
     }
@@ -31,7 +48,10 @@ export class ProductsService {
     return company.baseCurrencyId;
   }
 
-  async create(companyId: string, dto: CreateProductDto): Promise<ProductEntity> {
+  async create(
+    companyId: string,
+    dto: CreateProductDto,
+  ): Promise<ProductEntity> {
     const currencyId = await this.resolveCurrencyId(companyId, dto.currencyId);
 
     return this.prisma.product.create({
@@ -98,7 +118,11 @@ export class ProductsService {
     return product;
   }
 
-  async update(companyId: string, id: string, dto: UpdateProductDto): Promise<ProductEntity> {
+  async update(
+    companyId: string,
+    id: string,
+    dto: UpdateProductDto,
+  ): Promise<ProductEntity> {
     await this.findOne(companyId, id);
     return this.prisma.product.update({
       where: { id },
@@ -125,12 +149,17 @@ export class ProductsService {
 
   async remove(companyId: string, id: string): Promise<ProductEntity> {
     await this.findOne(companyId, id);
-    const movements = await this.prisma.stockMovement.count({ where: { companyId, productId: id } });
+    const movements = await this.prisma.stockMovement.count({
+      where: { companyId, productId: id },
+    });
     if (movements > 0) {
       throw new BadRequestException(
         'Product has stock movements and cannot be deleted; deactivate it instead',
       );
     }
-    return this.prisma.product.delete({ where: { id }, include: PRODUCT_INCLUDE });
+    return this.prisma.product.delete({
+      where: { id },
+      include: PRODUCT_INCLUDE,
+    });
   }
 }

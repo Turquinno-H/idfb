@@ -1,8 +1,22 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RolesService } from './roles.service';
 import { UsersService } from './users.service';
-import { AssignRolesDto, CreateRoleDto, InviteUserDto, UpdateRoleDto } from './dto/roles.dto';
+import {
+  AssignRolesDto,
+  CreateRoleDto,
+  InviteUserDto,
+  UpdateRoleDto,
+} from './dto/roles.dto';
 import { TenantCompanyId } from '../../common/decorators/tenant.decorator';
 import { RequirePermissions } from '../../common/decorators/permissions.decorator';
 import { Audit } from '../../common/decorators/audit.decorator';
@@ -43,7 +57,10 @@ export class RolesController {
   @Get('roles/:id')
   @RequirePermissions({ resource: 'role', action: 'read' })
   @ApiOperation({ summary: 'Get a role by id' })
-  getRole(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  getRole(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.rolesService.findOne(companyId, id);
   }
 
@@ -63,7 +80,10 @@ export class RolesController {
   @RequirePermissions({ resource: 'role', action: 'delete' })
   @Audit('delete', 'Role')
   @ApiOperation({ summary: 'Delete a role' })
-  removeRole(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  removeRole(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.rolesService.remove(companyId, id);
   }
 
@@ -99,7 +119,10 @@ export class RolesController {
   @RequirePermissions({ resource: 'user', action: 'update' })
   @Audit('suspend', 'CompanyMember')
   @ApiOperation({ summary: 'Suspend a company member' })
-  suspend(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  suspend(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.usersService.setStatus(companyId, id, 'SUSPENDED');
   }
 
@@ -107,7 +130,10 @@ export class RolesController {
   @RequirePermissions({ resource: 'user', action: 'update' })
   @Audit('activate', 'CompanyMember')
   @ApiOperation({ summary: 'Reactivate a company member' })
-  activate(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  activate(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.usersService.setStatus(companyId, id, 'ACTIVE');
   }
 }

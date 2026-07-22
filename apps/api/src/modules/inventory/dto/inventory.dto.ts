@@ -1,6 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsIn, IsNumber, IsOptional, IsString, IsUUID, MaxLength, Min } from 'class-validator';
+import {
+  IsIn,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 export class StockAdjustmentDto {
   @ApiProperty()
@@ -21,7 +29,9 @@ export class StockAdjustmentDto {
   @IsIn(['IN', 'OUT'])
   direction!: 'IN' | 'OUT';
 
-  @ApiPropertyOptional({ description: 'Unit cost for incoming adjustments (average-cost update)' })
+  @ApiPropertyOptional({
+    description: 'Unit cost for incoming adjustments (average-cost update)',
+  })
   @IsOptional()
   @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 4 })

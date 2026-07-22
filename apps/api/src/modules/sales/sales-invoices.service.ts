@@ -1,13 +1,25 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma, InvoiceStatus } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { nextDocumentNumber } from '../../common/util/document-number';
 import { computeDocumentTotals } from '../../common/util/line-totals';
 import { CreateSalesInvoiceDto } from './dto/sales.dto';
 
 type SalesInvoiceEntity = Prisma.SalesInvoiceGetPayload<{
-  include: { customer: true; currency: true; lines: { include: { product: true; taxRate: true } } };
+  include: {
+    customer: true;
+    currency: true;
+    lines: { include: { product: true; taxRate: true } };
+  };
 }>;
 
 const SI_INCLUDE = {
@@ -47,12 +59,16 @@ export class SalesInvoicesService {
     userId: string,
     dto: CreateSalesInvoiceDto,
   ): Promise<SalesInvoiceEntity> {
-    const customer = await this.prisma.customer.findFirst({ where: { id: dto.customerId, companyId } });
+    const customer = await this.prisma.customer.findFirst({
+      where: { id: dto.customerId, companyId },
+    });
     if (!customer) {
       throw new NotFoundException('Customer not found');
     }
 
-    const taxRateIds = dto.lines.map((l) => l.taxRateId).filter((v): v is string => Boolean(v));
+    const taxRateIds = dto.lines
+      .map((l) => l.taxRateId)
+      .filter((v): v is string => Boolean(v));
     const taxRates = await this.prisma.taxRate.findMany({
       where: { companyId, id: { in: taxRateIds } },
     });
@@ -67,8 +83,16 @@ export class SalesInvoicesService {
       })),
     );
 
-    const currencyId = await this.resolveCurrencyId(companyId, dto.customerId, dto.currencyId);
-    const invoiceNumber = await nextDocumentNumber(this.prisma.salesInvoice, companyId, 'SF');
+    const currencyId = await this.resolveCurrencyId(
+      companyId,
+      dto.customerId,
+      dto.currencyId,
+    );
+    const invoiceNumber = await nextDocumentNumber(
+      this.prisma.salesInvoice,
+      companyId,
+      'SF',
+    );
 
     return this.prisma.salesInvoice.create({
       data: {
@@ -107,7 +131,9 @@ export class SalesInvoicesService {
   ): Promise<PaginatedResult<SalesInvoiceEntity>> {
     const where: Prisma.SalesInvoiceWhereInput = {
       companyId,
-      ...(query.search ? { invoiceNumber: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { invoiceNumber: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.salesInvoice.findMany({

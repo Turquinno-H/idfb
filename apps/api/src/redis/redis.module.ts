@@ -12,7 +12,8 @@ export const REDIS_CLIENT = Symbol('REDIS_CLIENT');
       provide: REDIS_CLIENT,
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const { host, port, password } = configService.get<AppConfig['redis']>('app.redis')!;
+        const { host, port, password } =
+          configService.get<AppConfig['redis']>('app.redis')!;
         return new Redis({
           host,
           port,

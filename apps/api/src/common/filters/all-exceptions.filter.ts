@@ -58,7 +58,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       const message =
         typeof response === 'string'
           ? response
-          : ((response as { message?: string | string[] }).message ?? exception.message);
+          : ((response as { message?: string | string[] }).message ??
+            exception.message);
       return {
         status: exception.getStatus(),
         message,
@@ -92,7 +93,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
   } {
     switch (exception.code) {
       case 'P2002': {
-        const target = (exception.meta?.target as string[] | undefined)?.join(', ') ?? 'field';
+        const target =
+          (exception.meta?.target as string[] | undefined)?.join(', ') ??
+          'field';
         return {
           status: HttpStatus.CONFLICT,
           message: `A record with this ${target} already exists`,

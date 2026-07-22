@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { CreateUnitDto, UpdateUnitDto } from './dto/units.dto';
 
 type Entity = Prisma.UnitGetPayload<Record<string, never>>;
@@ -21,10 +25,15 @@ export class UnitsService {
     });
   }
 
-  async findAll(companyId: string, query: PaginationQueryDto): Promise<PaginatedResult<Entity>> {
+  async findAll(
+    companyId: string,
+    query: PaginationQueryDto,
+  ): Promise<PaginatedResult<Entity>> {
     const where: Prisma.UnitWhereInput = {
       companyId,
-      ...(query.search ? { name: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { name: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.unit.findMany({
@@ -39,14 +48,20 @@ export class UnitsService {
   }
 
   async findOne(companyId: string, id: string): Promise<Entity> {
-    const entity = await this.prisma.unit.findFirst({ where: { id, companyId } });
+    const entity = await this.prisma.unit.findFirst({
+      where: { id, companyId },
+    });
     if (!entity) {
       throw new NotFoundException('Unit not found');
     }
     return entity;
   }
 
-  async update(companyId: string, id: string, dto: UpdateUnitDto): Promise<Entity> {
+  async update(
+    companyId: string,
+    id: string,
+    dto: UpdateUnitDto,
+  ): Promise<Entity> {
     await this.findOne(companyId, id);
     return this.prisma.unit.update({ where: { id }, data: dto });
   }

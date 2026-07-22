@@ -53,7 +53,9 @@ export class PosLineDto {
   @Min(0.0001)
   quantity!: number;
 
-  @ApiPropertyOptional({ description: 'Override unit price; defaults to product sales price' })
+  @ApiPropertyOptional({
+    description: 'Override unit price; defaults to product sales price',
+  })
   @IsOptional()
   @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 4 })

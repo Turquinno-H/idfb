@@ -16,7 +16,10 @@ export class AuditController {
   @Get()
   @RequirePermissions({ resource: 'audit_log', action: 'read' })
   @ApiOperation({ summary: 'List audit log entries for the active company' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.auditService.findAll(companyId, query);
   }
 

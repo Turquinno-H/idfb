@@ -1,19 +1,31 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { nextDocumentNumber } from '../../common/util/document-number';
 import { CreateCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
 
-type CustomerEntity = Prisma.CustomerGetPayload<{ include: { currency: true; priceList: true } }>;
+type CustomerEntity = Prisma.CustomerGetPayload<{
+  include: { currency: true; priceList: true };
+}>;
 
-const CUSTOMER_INCLUDE = { currency: true, priceList: true } satisfies Prisma.CustomerInclude;
+const CUSTOMER_INCLUDE = {
+  currency: true,
+  priceList: true,
+} satisfies Prisma.CustomerInclude;
 
 @Injectable()
 export class CustomersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async resolveCurrencyId(companyId: string, currencyId?: string): Promise<string> {
+  private async resolveCurrencyId(
+    companyId: string,
+    currencyId?: string,
+  ): Promise<string> {
     if (currencyId) {
       return currencyId;
     }
@@ -24,8 +36,13 @@ export class CustomersService {
     return company.baseCurrencyId;
   }
 
-  async create(companyId: string, dto: CreateCustomerDto): Promise<CustomerEntity> {
-    const code = dto.code ?? (await nextDocumentNumber(this.prisma.customer, companyId, 'MUS'));
+  async create(
+    companyId: string,
+    dto: CreateCustomerDto,
+  ): Promise<CustomerEntity> {
+    const code =
+      dto.code ??
+      (await nextDocumentNumber(this.prisma.customer, companyId, 'MUS'));
     const currencyId = await this.resolveCurrencyId(companyId, dto.currencyId);
 
     return this.prisma.customer.create({
@@ -92,7 +109,10 @@ export class CustomersService {
     return customer;
   }
 
-  async getStatement(companyId: string, id: string): Promise<{
+  async getStatement(
+    companyId: string,
+    id: string,
+  ): Promise<{
     customerId: string;
     invoiceTotal: number;
     collectedTotal: number;
@@ -122,7 +142,11 @@ export class CustomersService {
     };
   }
 
-  async update(companyId: string, id: string, dto: UpdateCustomerDto): Promise<CustomerEntity> {
+  async update(
+    companyId: string,
+    id: string,
+    dto: UpdateCustomerDto,
+  ): Promise<CustomerEntity> {
     await this.findOne(companyId, id);
     return this.prisma.customer.update({
       where: { id },
@@ -148,6 +172,9 @@ export class CustomersService {
 
   async remove(companyId: string, id: string): Promise<CustomerEntity> {
     await this.findOne(companyId, id);
-    return this.prisma.customer.delete({ where: { id }, include: CUSTOMER_INCLUDE });
+    return this.prisma.customer.delete({
+      where: { id },
+      include: CUSTOMER_INCLUDE,
+    });
   }
 }

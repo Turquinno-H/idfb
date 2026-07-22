@@ -1,10 +1,21 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEmail, IsEnum, IsInt, IsOptional, IsString, IsUUID, MaxLength, Min } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  Min,
+} from 'class-validator';
 import { PartyType } from '@idfb/database';
 
 export class CreateSupplierDto {
-  @ApiPropertyOptional({ description: 'Optional; auto-generated (TED-000001) when omitted' })
+  @ApiPropertyOptional({
+    description: 'Optional; auto-generated (TED-000001) when omitted',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(50)
@@ -49,7 +60,9 @@ export class CreateSupplierDto {
   @MaxLength(150)
   website?: string;
 
-  @ApiPropertyOptional({ description: 'Currency id; defaults to company base currency' })
+  @ApiPropertyOptional({
+    description: 'Currency id; defaults to company base currency',
+  })
   @IsOptional()
   @IsUUID()
   currencyId?: string;

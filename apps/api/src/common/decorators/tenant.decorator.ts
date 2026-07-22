@@ -1,4 +1,8 @@
-import { createParamDecorator, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import {
+  createParamDecorator,
+  ExecutionContext,
+  ForbiddenException,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import type { AuthenticatedUser } from '../../auth/types/authenticated-user.interface';
 
@@ -9,10 +13,14 @@ import type { AuthenticatedUser } from '../../auth/types/authenticated-user.inte
  */
 export const TenantCompanyId = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext): string => {
-    const request = ctx.switchToHttp().getRequest<Request & { user?: AuthenticatedUser }>();
+    const request = ctx
+      .switchToHttp()
+      .getRequest<Request & { user?: AuthenticatedUser }>();
     const companyId = request.user?.companyId;
     if (!companyId) {
-      throw new ForbiddenException('No active company context. Please select a company first.');
+      throw new ForbiddenException(
+        'No active company context. Please select a company first.',
+      );
     }
     return companyId;
   },

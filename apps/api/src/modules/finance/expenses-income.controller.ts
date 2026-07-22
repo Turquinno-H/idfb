@@ -30,7 +30,10 @@ export class ExpensesIncomeController {
   @Get('expenses')
   @RequirePermissions({ resource: 'expense', action: 'read' })
   @ApiOperation({ summary: 'List expenses' })
-  listExpenses(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  listExpenses(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.listExpenses(companyId, query);
   }
 
@@ -49,7 +52,10 @@ export class ExpensesIncomeController {
   @Get('income')
   @RequirePermissions({ resource: 'income', action: 'read' })
   @ApiOperation({ summary: 'List income entries' })
-  listIncome(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  listIncome(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.listIncome(companyId, query);
   }
 }

@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SalesOrdersService } from './sales-orders.service';
 import { CreateSalesOrderDto, UpdateSalesOrderDto } from './dto/sales.dto';
@@ -30,14 +39,20 @@ export class SalesOrdersController {
   @Get()
   @RequirePermissions({ resource: 'sales_order', action: 'read' })
   @ApiOperation({ summary: 'List sales orders' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'sales_order', action: 'read' })
   @ApiOperation({ summary: 'Get a sales order by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.findOne(companyId, id);
   }
 
@@ -57,7 +72,10 @@ export class SalesOrdersController {
   @RequirePermissions({ resource: 'sales_order', action: 'approve' })
   @Audit('confirm', 'SalesOrder')
   @ApiOperation({ summary: 'Confirm a sales order' })
-  confirm(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  confirm(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.confirm(companyId, id);
   }
 
@@ -77,7 +95,10 @@ export class SalesOrdersController {
   @RequirePermissions({ resource: 'sales_order', action: 'update' })
   @Audit('cancel', 'SalesOrder')
   @ApiOperation({ summary: 'Cancel a sales order' })
-  cancel(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  cancel(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.cancel(companyId, id);
   }
 }

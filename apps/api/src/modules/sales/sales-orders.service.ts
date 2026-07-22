@@ -1,7 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma, SalesOrderStatus, StockMovementType } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { nextDocumentNumber } from '../../common/util/document-number';
 import { InventoryService } from '../inventory/inventory.service';
 import { CreateSalesOrderDto, UpdateSalesOrderDto } from './dto/sales.dto';
@@ -51,8 +59,14 @@ export class SalesOrdersService {
     return company.baseCurrencyId;
   }
 
-  async create(companyId: string, userId: string, dto: CreateSalesOrderDto): Promise<SalesOrderEntity> {
-    const customer = await this.prisma.customer.findFirst({ where: { id: dto.customerId, companyId } });
+  async create(
+    companyId: string,
+    userId: string,
+    dto: CreateSalesOrderDto,
+  ): Promise<SalesOrderEntity> {
+    const customer = await this.prisma.customer.findFirst({
+      where: { id: dto.customerId, companyId },
+    });
     if (!customer) {
       throw new NotFoundException('Customer not found');
     }
@@ -62,8 +76,16 @@ export class SalesOrdersService {
     if (!warehouse) {
       throw new NotFoundException('Warehouse not found');
     }
-    const currencyId = await this.resolveCurrencyId(companyId, dto.customerId, dto.currencyId);
-    const orderNumber = await nextDocumentNumber(this.prisma.salesOrder, companyId, 'SIP');
+    const currencyId = await this.resolveCurrencyId(
+      companyId,
+      dto.customerId,
+      dto.currencyId,
+    );
+    const orderNumber = await nextDocumentNumber(
+      this.prisma.salesOrder,
+      companyId,
+      'SIP',
+    );
 
     const created = await this.prisma.salesOrder.create({
       data: {
@@ -107,7 +129,9 @@ export class SalesOrdersService {
   ): Promise<PaginatedResult<SalesOrderEntity>> {
     const where: Prisma.SalesOrderWhereInput = {
       companyId,
-      ...(query.search ? { orderNumber: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { orderNumber: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.salesOrder.findMany({
@@ -133,7 +157,11 @@ export class SalesOrdersService {
     return order;
   }
 
-  async update(companyId: string, id: string, dto: UpdateSalesOrderDto): Promise<SalesOrderEntity> {
+  async update(
+    companyId: string,
+    id: string,
+    dto: UpdateSalesOrderDto,
+  ): Promise<SalesOrderEntity> {
     const order = await this.findOne(companyId, id);
     if (order.status !== SalesOrderStatus.DRAFT) {
       throw new BadRequestException('Only draft sales orders can be edited');
@@ -159,11 +187,16 @@ export class SalesOrdersService {
           warehouseId: dto.warehouseId,
           branchId: dto.branchId,
           currencyId: dto.currencyId,
-          deliveryDate: dto.deliveryDate ? new Date(dto.deliveryDate) : undefined,
+          deliveryDate: dto.deliveryDate
+            ? new Date(dto.deliveryDate)
+            : undefined,
           note: dto.note,
         },
       });
-      return tx.salesOrder.findFirstOrThrow({ where: { id }, include: SO_INCLUDE });
+      return tx.salesOrder.findFirstOrThrow({
+        where: { id },
+        include: SO_INCLUDE,
+      });
     });
   }
 
@@ -183,19 +216,26 @@ export class SalesOrdersService {
    * Delivers the full outstanding quantity of a confirmed sales order, posting
    * stock-OUT movements at moving-average cost and marking the order delivered.
    */
-  async deliver(companyId: string, userId: string, id: string): Promise<SalesOrderEntity> {
+  async deliver(
+    companyId: string,
+    userId: string,
+    id: string,
+  ): Promise<SalesOrderEntity> {
     const order = await this.findOne(companyId, id);
     const deliverableStatuses: SalesOrderStatus[] = [
       SalesOrderStatus.CONFIRMED,
       SalesOrderStatus.PARTIALLY_DELIVERED,
     ];
     if (!deliverableStatuses.includes(order.status)) {
-      throw new BadRequestException('Sales order must be confirmed before delivery');
+      throw new BadRequestException(
+        'Sales order must be confirmed before delivery',
+      );
     }
 
     await this.prisma.$transaction(async (tx) => {
       for (const line of order.lines) {
-        const remaining = Number(line.quantity) - Number(line.deliveredQuantity);
+        const remaining =
+          Number(line.quantity) - Number(line.deliveredQuantity);
         if (remaining <= 0) {
           continue;
         }
@@ -229,7 +269,9 @@ export class SalesOrdersService {
   async cancel(companyId: string, id: string): Promise<SalesOrderEntity> {
     const order = await this.findOne(companyId, id);
     if (order.status === SalesOrderStatus.DELIVERED) {
-      throw new BadRequestException('Delivered sales orders cannot be cancelled');
+      throw new BadRequestException(
+        'Delivered sales orders cannot be cancelled',
+      );
     }
     await this.prisma.salesOrder.update({
       where: { id },

@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { InventoryService } from './inventory.service';
 import { StockAdjustmentDto, StockTransferDto } from './dto/inventory.dto';
 import { PaginationQueryDto } from '../../common/dto/pagination.dto';
@@ -18,7 +23,9 @@ export class InventoryController {
   @Get('stock')
   @RequirePermissions({ resource: 'inventory', action: 'read' })
   @ApiQuery({ name: 'warehouseId', required: false })
-  @ApiOperation({ summary: 'List current stock levels (optionally by warehouse)' })
+  @ApiOperation({
+    summary: 'List current stock levels (optionally by warehouse)',
+  })
   listStock(
     @TenantCompanyId() companyId: string,
     @Query() query: PaginationQueryDto,
@@ -31,14 +38,21 @@ export class InventoryController {
   @RequirePermissions({ resource: 'stock_movement', action: 'read' })
   @ApiQuery({ name: 'productId', required: false })
   @ApiQuery({ name: 'warehouseId', required: false })
-  @ApiOperation({ summary: 'List stock movements (audit trail of quantity changes)' })
+  @ApiOperation({
+    summary: 'List stock movements (audit trail of quantity changes)',
+  })
   listMovements(
     @TenantCompanyId() companyId: string,
     @Query() query: PaginationQueryDto,
     @Query('productId') productId?: string,
     @Query('warehouseId') warehouseId?: string,
   ) {
-    return this.inventoryService.listMovements(companyId, query, productId, warehouseId);
+    return this.inventoryService.listMovements(
+      companyId,
+      query,
+      productId,
+      warehouseId,
+    );
   }
 
   @Post('adjustments')
@@ -50,7 +64,10 @@ export class InventoryController {
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: StockAdjustmentDto,
   ) {
-    return this.inventoryService.adjust(companyId, { ...dto, userId: user.userId });
+    return this.inventoryService.adjust(companyId, {
+      ...dto,
+      userId: user.userId,
+    });
   }
 
   @Post('transfers')
@@ -62,6 +79,9 @@ export class InventoryController {
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: StockTransferDto,
   ) {
-    return this.inventoryService.transfer(companyId, { ...dto, userId: user.userId });
+    return this.inventoryService.transfer(companyId, {
+      ...dto,
+      userId: user.userId,
+    });
   }
 }

@@ -1,12 +1,24 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma, QuotationStatus } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { nextDocumentNumber } from '../../common/util/document-number';
 import { CreateQuotationDto, UpdateQuotationDto } from './dto/sales.dto';
 
 type QuotationEntity = Prisma.QuotationGetPayload<{
-  include: { customer: true; currency: true; lines: { include: { product: true; taxRate: true } } };
+  include: {
+    customer: true;
+    currency: true;
+    lines: { include: { product: true; taxRate: true } };
+  };
 }>;
 
 const QUOTATION_INCLUDE = {
@@ -41,13 +53,27 @@ export class QuotationsService {
     return company.baseCurrencyId;
   }
 
-  async create(companyId: string, userId: string, dto: CreateQuotationDto): Promise<QuotationEntity> {
-    const customer = await this.prisma.customer.findFirst({ where: { id: dto.customerId, companyId } });
+  async create(
+    companyId: string,
+    userId: string,
+    dto: CreateQuotationDto,
+  ): Promise<QuotationEntity> {
+    const customer = await this.prisma.customer.findFirst({
+      where: { id: dto.customerId, companyId },
+    });
     if (!customer) {
       throw new NotFoundException('Customer not found');
     }
-    const currencyId = await this.resolveCurrencyId(companyId, dto.customerId, dto.currencyId);
-    const quotationNumber = await nextDocumentNumber(this.prisma.quotation, companyId, 'TEK');
+    const currencyId = await this.resolveCurrencyId(
+      companyId,
+      dto.customerId,
+      dto.currencyId,
+    );
+    const quotationNumber = await nextDocumentNumber(
+      this.prisma.quotation,
+      companyId,
+      'TEK',
+    );
 
     return this.prisma.quotation.create({
       data: {
@@ -80,7 +106,9 @@ export class QuotationsService {
   ): Promise<PaginatedResult<QuotationEntity>> {
     const where: Prisma.QuotationWhereInput = {
       companyId,
-      ...(query.search ? { quotationNumber: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { quotationNumber: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.quotation.findMany({
@@ -106,7 +134,11 @@ export class QuotationsService {
     return quotation;
   }
 
-  async update(companyId: string, id: string, dto: UpdateQuotationDto): Promise<QuotationEntity> {
+  async update(
+    companyId: string,
+    id: string,
+    dto: UpdateQuotationDto,
+  ): Promise<QuotationEntity> {
     const quotation = await this.findOne(companyId, id);
     if (quotation.status !== QuotationStatus.DRAFT) {
       throw new BadRequestException('Only draft quotations can be edited');
@@ -135,7 +167,10 @@ export class QuotationsService {
           note: dto.note,
         },
       });
-      return tx.quotation.findFirstOrThrow({ where: { id }, include: QUOTATION_INCLUDE });
+      return tx.quotation.findFirstOrThrow({
+        where: { id },
+        include: QUOTATION_INCLUDE,
+      });
     });
   }
 
@@ -154,6 +189,9 @@ export class QuotationsService {
     if (quotation.status === QuotationStatus.CONVERTED) {
       throw new BadRequestException('Converted quotations cannot be deleted');
     }
-    return this.prisma.quotation.delete({ where: { id }, include: QUOTATION_INCLUDE });
+    return this.prisma.quotation.delete({
+      where: { id },
+      include: QUOTATION_INCLUDE,
+    });
   }
 }

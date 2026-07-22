@@ -44,7 +44,10 @@ export class InviteUserDto {
   @MaxLength(100)
   lastName!: string;
 
-  @ApiProperty({ type: [String], description: 'Role ids to grant to the invited member' })
+  @ApiProperty({
+    type: [String],
+    description: 'Role ids to grant to the invited member',
+  })
   @IsArray()
   @ArrayNotEmpty()
   @IsUUID('4', { each: true })

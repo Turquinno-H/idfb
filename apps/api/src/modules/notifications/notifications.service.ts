@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 
 type NotificationEntity = Prisma.NotificationGetPayload<Record<string, never>>;
 
@@ -53,12 +57,16 @@ export class NotificationsService {
   }
 
   async unreadCount(userId: string): Promise<{ count: number }> {
-    const count = await this.prisma.notification.count({ where: { userId, isRead: false } });
+    const count = await this.prisma.notification.count({
+      where: { userId, isRead: false },
+    });
     return { count };
   }
 
   async markRead(userId: string, id: string): Promise<NotificationEntity> {
-    const notification = await this.prisma.notification.findFirst({ where: { id, userId } });
+    const notification = await this.prisma.notification.findFirst({
+      where: { id, userId },
+    });
     if (!notification) {
       throw new NotFoundException('Notification not found');
     }

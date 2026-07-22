@@ -135,30 +135,8 @@ const specs = [
       { name: 'departmentId', tsType: 'string', validator: '@IsUUID()', optional: true },
     ],
   },
-  {
-    dir: 'payment-methods',
-    prismaModel: 'PaymentMethod',
-    prismaDelegate: 'paymentMethod',
-    className: 'PaymentMethods',
-    route: 'payment-methods',
-    tag: 'payment-methods',
-    permission: 'collection',
-    searchField: 'name',
-    orderBy: 'name',
-    fields: [
-      { name: 'name', tsType: 'string', validator: "@IsString()\n  @MaxLength(100)", example: 'Nakit' },
-      {
-        name: 'type',
-        tsType: 'string',
-        validator:
-          "@IsEnum(['CASH', 'BANK_TRANSFER', 'CREDIT_CARD', 'CHECK', 'PROMISSORY_NOTE', 'OTHER'])",
-        optional: true,
-        default: "'CASH'",
-        enumImport: true,
-      },
-      { name: 'isActive', tsType: 'boolean', validator: '@IsBoolean()', optional: true, default: 'true' },
-    ],
-  },
+  // NOTE: payment-methods is intentionally hand-written (uses the Prisma
+  // PaymentMethodType enum) and is excluded from scaffolding.
   {
     dir: 'banks',
     prismaModel: 'Bank',
@@ -202,8 +180,23 @@ function dtoFile(spec) {
     })
     .join('\n\n');
 
-  return `import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { ${[...validatorImports].join(', ')} } from 'class-validator';
+  const usedValidators = new Set();
+  for (const validatorName of validatorImports) {
+    const pattern = new RegExp(`@${validatorName}\\(`);
+    const usedInField = spec.fields.some((f) => pattern.test(f.validator));
+    const usedOptional = validatorName === 'IsOptional' && spec.fields.some((f) => f.optional);
+    if (usedInField || usedOptional) {
+      usedValidators.add(validatorName);
+    }
+  }
+  const hasOptional = spec.fields.some((f) => f.optional);
+  const swaggerImports = ['ApiProperty', 'PartialType'];
+  if (hasOptional) {
+    swaggerImports.splice(1, 0, 'ApiPropertyOptional');
+  }
+
+  return `import { ${swaggerImports.join(', ')} } from '@nestjs/swagger';
+import { ${[...usedValidators].sort().join(', ')} } from 'class-validator';
 
 export class Create${spec.prismaModel}Dto {
 ${createProps}

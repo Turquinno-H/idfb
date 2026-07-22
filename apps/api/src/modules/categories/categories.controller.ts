@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
@@ -24,14 +34,20 @@ export class CategoriesController {
   @Get()
   @RequirePermissions({ resource: 'category', action: 'read' })
   @ApiOperation({ summary: 'List product categories' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.categoriesService.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'category', action: 'read' })
   @ApiOperation({ summary: 'Get a category by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.categoriesService.findOne(companyId, id);
   }
 
@@ -51,7 +67,10 @@ export class CategoriesController {
   @RequirePermissions({ resource: 'category', action: 'delete' })
   @Audit('delete', 'Category')
   @ApiOperation({ summary: 'Delete a category' })
-  remove(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  remove(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.categoriesService.remove(companyId, id);
   }
 }

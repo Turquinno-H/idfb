@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AccountsService } from './accounts.service';
 import {
@@ -24,21 +33,30 @@ export class AccountsController {
   @RequirePermissions({ resource: 'cash_account', action: 'create' })
   @Audit('create', 'CashAccount')
   @ApiOperation({ summary: 'Create a cash account' })
-  createCash(@TenantCompanyId() companyId: string, @Body() dto: CreateCashAccountDto) {
+  createCash(
+    @TenantCompanyId() companyId: string,
+    @Body() dto: CreateCashAccountDto,
+  ) {
     return this.service.createCashAccount(companyId, dto);
   }
 
   @Get('cash-accounts')
   @RequirePermissions({ resource: 'cash_account', action: 'read' })
   @ApiOperation({ summary: 'List cash accounts' })
-  listCash(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  listCash(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.listCashAccounts(companyId, query);
   }
 
   @Get('cash-accounts/:id/balance')
   @RequirePermissions({ resource: 'cash_account', action: 'read' })
   @ApiOperation({ summary: 'Get a cash account computed balance' })
-  cashBalance(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  cashBalance(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.getCashAccountBalance(companyId, id);
   }
 
@@ -59,21 +77,30 @@ export class AccountsController {
   @RequirePermissions({ resource: 'bank_account', action: 'create' })
   @Audit('create', 'BankAccount')
   @ApiOperation({ summary: 'Create a bank account' })
-  createBank(@TenantCompanyId() companyId: string, @Body() dto: CreateBankAccountDto) {
+  createBank(
+    @TenantCompanyId() companyId: string,
+    @Body() dto: CreateBankAccountDto,
+  ) {
     return this.service.createBankAccount(companyId, dto);
   }
 
   @Get('bank-accounts')
   @RequirePermissions({ resource: 'bank_account', action: 'read' })
   @ApiOperation({ summary: 'List bank accounts' })
-  listBank(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  listBank(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.listBankAccounts(companyId, query);
   }
 
   @Get('bank-accounts/:id/balance')
   @RequirePermissions({ resource: 'bank_account', action: 'read' })
   @ApiOperation({ summary: 'Get a bank account computed balance' })
-  bankBalance(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  bankBalance(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.getBankAccountBalance(companyId, id);
   }
 

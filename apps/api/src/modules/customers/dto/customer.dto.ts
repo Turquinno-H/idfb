@@ -14,7 +14,9 @@ import {
 import { PartyType } from '@idfb/database';
 
 export class CreateCustomerDto {
-  @ApiPropertyOptional({ description: 'Optional; auto-generated (MUS-000001) when omitted' })
+  @ApiPropertyOptional({
+    description: 'Optional; auto-generated (MUS-000001) when omitted',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(50)
@@ -65,7 +67,9 @@ export class CreateCustomerDto {
   @MaxLength(150)
   website?: string;
 
-  @ApiPropertyOptional({ description: 'Currency id; defaults to company base currency' })
+  @ApiPropertyOptional({
+    description: 'Currency id; defaults to company base currency',
+  })
   @IsOptional()
   @IsUUID()
   currencyId?: string;

@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TaxRatesService } from './tax-rates.service';
 import { CreateTaxRateDto, UpdateTaxRateDto } from './dto/tax-rates.dto';
@@ -24,14 +34,20 @@ export class TaxRatesController {
   @Get()
   @RequirePermissions({ resource: 'tax_rate', action: 'read' })
   @ApiOperation({ summary: 'List TaxRate records' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'tax_rate', action: 'read' })
   @ApiOperation({ summary: 'Get TaxRate by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.findOne(companyId, id);
   }
 
@@ -51,7 +67,10 @@ export class TaxRatesController {
   @RequirePermissions({ resource: 'tax_rate', action: 'delete' })
   @Audit('delete', 'TaxRate')
   @ApiOperation({ summary: 'Delete TaxRate' })
-  remove(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  remove(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.remove(companyId, id);
   }
 }

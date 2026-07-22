@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { WarehousesService } from './warehouses.service';
 import { CreateWarehouseDto, UpdateWarehouseDto } from './dto/warehouse.dto';
@@ -17,21 +27,30 @@ export class WarehousesController {
   @RequirePermissions({ resource: 'warehouse', action: 'create' })
   @Audit('create', 'Warehouse')
   @ApiOperation({ summary: 'Create a warehouse' })
-  create(@TenantCompanyId() companyId: string, @Body() dto: CreateWarehouseDto) {
+  create(
+    @TenantCompanyId() companyId: string,
+    @Body() dto: CreateWarehouseDto,
+  ) {
     return this.warehousesService.create(companyId, dto);
   }
 
   @Get()
   @RequirePermissions({ resource: 'warehouse', action: 'read' })
   @ApiOperation({ summary: 'List warehouses' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.warehousesService.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'warehouse', action: 'read' })
   @ApiOperation({ summary: 'Get a warehouse by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.warehousesService.findOne(companyId, id);
   }
 
@@ -51,7 +70,10 @@ export class WarehousesController {
   @RequirePermissions({ resource: 'warehouse', action: 'delete' })
   @Audit('delete', 'Warehouse')
   @ApiOperation({ summary: 'Delete a warehouse' })
-  remove(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  remove(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.warehousesService.remove(companyId, id);
   }
 }

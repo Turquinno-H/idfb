@@ -15,7 +15,17 @@ import { ExpensesIncomeService } from './expenses-income.service';
     PaymentsController,
     ExpensesIncomeController,
   ],
-  providers: [AccountsService, CollectionsService, PaymentsService, ExpensesIncomeService],
-  exports: [AccountsService, CollectionsService, PaymentsService, ExpensesIncomeService],
+  providers: [
+    AccountsService,
+    CollectionsService,
+    PaymentsService,
+    ExpensesIncomeService,
+  ],
+  exports: [
+    AccountsService,
+    CollectionsService,
+    PaymentsService,
+    ExpensesIncomeService,
+  ],
 })
 export class FinanceModule {}

@@ -1,8 +1,16 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsOptional, IsUUID, IsNumber, IsEnum, Min, Max, MaxLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 export class CreateTaxRateDto {
-  @ApiProperty({ example: "KDV %20" })
+  @ApiProperty({ example: 'KDV %20' })
   @IsString()
   @MaxLength(100)
   name!: string;

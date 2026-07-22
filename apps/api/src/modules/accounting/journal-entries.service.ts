@@ -1,7 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JournalEntryStatus, Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { nextDocumentNumber } from '../../common/util/document-number';
 import { CreateJournalEntryDto } from './dto/accounting.dto';
 
@@ -34,7 +42,10 @@ export class JournalEntriesService {
     let totalDebit = 0;
     let totalCredit = 0;
     for (const line of dto.lines) {
-      if ((line.debit > 0 && line.credit > 0) || (line.debit === 0 && line.credit === 0)) {
+      if (
+        (line.debit > 0 && line.credit > 0) ||
+        (line.debit === 0 && line.credit === 0)
+      ) {
         throw new BadRequestException(
           'Each journal line must be either a debit or a credit, not both or neither',
         );
@@ -55,10 +66,16 @@ export class JournalEntriesService {
       select: { id: true },
     });
     if (accounts.length !== accountIds.length) {
-      throw new BadRequestException('One or more accounts do not belong to this company');
+      throw new BadRequestException(
+        'One or more accounts do not belong to this company',
+      );
     }
 
-    const entryNumber = await nextDocumentNumber(this.prisma.journalEntry, companyId, 'YEV');
+    const entryNumber = await nextDocumentNumber(
+      this.prisma.journalEntry,
+      companyId,
+      'YEV',
+    );
 
     return this.prisma.journalEntry.create({
       data: {
@@ -89,7 +106,9 @@ export class JournalEntriesService {
   ): Promise<PaginatedResult<JournalEntryEntity>> {
     const where: Prisma.JournalEntryWhereInput = {
       companyId,
-      ...(query.search ? { entryNumber: { contains: query.search, mode: 'insensitive' } } : {}),
+      ...(query.search
+        ? { entryNumber: { contains: query.search, mode: 'insensitive' } }
+        : {}),
     };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.journalEntry.findMany({
@@ -173,6 +192,10 @@ export class JournalEntriesService {
 
     rows.sort((a, b) => a.code.localeCompare(b.code));
 
-    return { accounts: rows, totalDebit: round(totalDebit), totalCredit: round(totalCredit) };
+    return {
+      accounts: rows,
+      totalDebit: round(totalDebit),
+      totalCredit: round(totalCredit),
+    };
   }
 }

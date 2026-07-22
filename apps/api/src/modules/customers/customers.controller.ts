@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
@@ -24,21 +34,32 @@ export class CustomersController {
   @Get()
   @RequirePermissions({ resource: 'customer', action: 'read' })
   @ApiOperation({ summary: 'List customers' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.customersService.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'customer', action: 'read' })
   @ApiOperation({ summary: 'Get a customer by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.customersService.findOne(companyId, id);
   }
 
   @Get(':id/statement')
   @RequirePermissions({ resource: 'customer', action: 'read' })
-  @ApiOperation({ summary: 'Get a customer receivables statement (invoices vs collections)' })
-  statement(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  @ApiOperation({
+    summary: 'Get a customer receivables statement (invoices vs collections)',
+  })
+  statement(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.customersService.getStatement(companyId, id);
   }
 
@@ -58,7 +79,10 @@ export class CustomersController {
   @RequirePermissions({ resource: 'customer', action: 'delete' })
   @Audit('delete', 'Customer')
   @ApiOperation({ summary: 'Delete a customer' })
-  remove(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  remove(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.customersService.remove(companyId, id);
   }
 }

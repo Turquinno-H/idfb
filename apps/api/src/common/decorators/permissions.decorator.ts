@@ -10,4 +10,5 @@ export interface RequiredPermission {
 /** Declares the permission(s) required to access a route, checked against the caller's RBAC roles. */
 export const RequirePermissions = (
   ...permissions: RequiredPermission[]
-): MethodDecorator & ClassDecorator => SetMetadata(PERMISSIONS_KEY, permissions);
+): MethodDecorator & ClassDecorator =>
+  SetMetadata(PERMISSIONS_KEY, permissions);

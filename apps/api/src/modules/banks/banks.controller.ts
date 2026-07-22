@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BanksService } from './banks.service';
 import { CreateBankDto, UpdateBankDto } from './dto/banks.dto';
@@ -24,14 +34,20 @@ export class BanksController {
   @Get()
   @RequirePermissions({ resource: 'bank_account', action: 'read' })
   @ApiOperation({ summary: 'List Bank records' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'bank_account', action: 'read' })
   @ApiOperation({ summary: 'Get Bank by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.findOne(companyId, id);
   }
 
@@ -51,7 +67,10 @@ export class BanksController {
   @RequirePermissions({ resource: 'bank_account', action: 'delete' })
   @Audit('delete', 'Bank')
   @ApiOperation({ summary: 'Delete Bank' })
-  remove(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  remove(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.remove(companyId, id);
   }
 }

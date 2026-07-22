@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsBoolean, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import { PaymentMethodType } from '@idfb/database';
 
 export class CreatePaymentMethodDto {
@@ -8,7 +14,10 @@ export class CreatePaymentMethodDto {
   @MaxLength(100)
   name!: string;
 
-  @ApiPropertyOptional({ enum: PaymentMethodType, default: PaymentMethodType.CASH })
+  @ApiPropertyOptional({
+    enum: PaymentMethodType,
+    default: PaymentMethodType.CASH,
+  })
   @IsOptional()
   @IsEnum(PaymentMethodType)
   type?: PaymentMethodType;
@@ -19,4 +28,6 @@ export class CreatePaymentMethodDto {
   isActive?: boolean;
 }
 
-export class UpdatePaymentMethodDto extends PartialType(CreatePaymentMethodDto) {}
+export class UpdatePaymentMethodDto extends PartialType(
+  CreatePaymentMethodDto,
+) {}

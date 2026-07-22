@@ -8,7 +8,11 @@ export interface SendMailOptions {
   subject: string;
   html: string;
   text?: string;
-  attachments?: { filename: string; content: Buffer | string; contentType?: string }[];
+  attachments?: {
+    filename: string;
+    content: Buffer | string;
+    contentType?: string;
+  }[];
 }
 
 @Injectable()
@@ -39,7 +43,9 @@ export class MailService {
         attachments: options.attachments,
       });
     } catch (error) {
-      this.logger.error(`Failed to send email to ${options.to}: ${(error as Error).message}`);
+      this.logger.error(
+        `Failed to send email to ${options.to}: ${(error as Error).message}`,
+      );
       throw error;
     }
   }

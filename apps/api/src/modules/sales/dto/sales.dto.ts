@@ -147,7 +147,10 @@ export class CreateSalesInvoiceDto {
   @IsUUID()
   currencyId?: string;
 
-  @ApiPropertyOptional({ enum: SalesInvoiceType, default: SalesInvoiceType.E_ARCHIVE })
+  @ApiPropertyOptional({
+    enum: SalesInvoiceType,
+    default: SalesInvoiceType.E_ARCHIVE,
+  })
   @IsOptional()
   @IsEnum(SalesInvoiceType)
   invoiceType?: SalesInvoiceType;

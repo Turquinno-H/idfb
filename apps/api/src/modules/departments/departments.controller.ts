@@ -1,7 +1,20 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DepartmentsService } from './departments.service';
-import { CreateDepartmentDto, UpdateDepartmentDto } from './dto/departments.dto';
+import {
+  CreateDepartmentDto,
+  UpdateDepartmentDto,
+} from './dto/departments.dto';
 import { PaginationQueryDto } from '../../common/dto/pagination.dto';
 import { TenantCompanyId } from '../../common/decorators/tenant.decorator';
 import { RequirePermissions } from '../../common/decorators/permissions.decorator';
@@ -17,21 +30,30 @@ export class DepartmentsController {
   @RequirePermissions({ resource: 'employee', action: 'create' })
   @Audit('create', 'Department')
   @ApiOperation({ summary: 'Create Department' })
-  create(@TenantCompanyId() companyId: string, @Body() dto: CreateDepartmentDto) {
+  create(
+    @TenantCompanyId() companyId: string,
+    @Body() dto: CreateDepartmentDto,
+  ) {
     return this.service.create(companyId, dto);
   }
 
   @Get()
   @RequirePermissions({ resource: 'employee', action: 'read' })
   @ApiOperation({ summary: 'List Department records' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'employee', action: 'read' })
   @ApiOperation({ summary: 'Get Department by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.findOne(companyId, id);
   }
 
@@ -51,7 +73,10 @@ export class DepartmentsController {
   @RequirePermissions({ resource: 'employee', action: 'delete' })
   @Audit('delete', 'Department')
   @ApiOperation({ summary: 'Delete Department' })
-  remove(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  remove(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.remove(companyId, id);
   }
 }

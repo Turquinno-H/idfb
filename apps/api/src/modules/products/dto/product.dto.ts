@@ -53,7 +53,10 @@ export class CreateProductDto {
   @IsUUID()
   taxRateId?: string;
 
-  @ApiPropertyOptional({ description: 'Currency id; defaults to the company base currency when omitted' })
+  @ApiPropertyOptional({
+    description:
+      'Currency id; defaults to the company base currency when omitted',
+  })
   @IsOptional()
   @IsUUID()
   currencyId?: string;

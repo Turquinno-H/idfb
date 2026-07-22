@@ -1,7 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InvoiceStatus, Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 import { resolveCompanyCurrency } from '../../common/util/company-currency';
 import { CreateCollectionDto } from './dto/finance.dto';
 
@@ -18,12 +26,22 @@ export class CollectionsService {
    * invoice's paid amount and status (PAID / PARTIALLY_PAID) are updated
    * atomically. A collection may not exceed the invoice's outstanding balance.
    */
-  async create(companyId: string, userId: string, dto: CreateCollectionDto): Promise<CollectionEntity> {
-    const customer = await this.prisma.customer.findFirst({ where: { id: dto.customerId, companyId } });
+  async create(
+    companyId: string,
+    userId: string,
+    dto: CreateCollectionDto,
+  ): Promise<CollectionEntity> {
+    const customer = await this.prisma.customer.findFirst({
+      where: { id: dto.customerId, companyId },
+    });
     if (!customer) {
       throw new NotFoundException('Customer not found');
     }
-    const currencyId = await resolveCompanyCurrency(this.prisma, companyId, dto.currencyId);
+    const currencyId = await resolveCompanyCurrency(
+      this.prisma,
+      companyId,
+      dto.currencyId,
+    );
 
     return this.prisma.$transaction(async (tx) => {
       if (dto.salesInvoiceId) {
@@ -34,7 +52,9 @@ export class CollectionsService {
           throw new NotFoundException('Sales invoice not found');
         }
         if (invoice.status === InvoiceStatus.CANCELLED) {
-          throw new BadRequestException('Cannot collect against a cancelled invoice');
+          throw new BadRequestException(
+            'Cannot collect against a cancelled invoice',
+          );
         }
         const outstanding = Number(invoice.total) - Number(invoice.paidAmount);
         if (dto.amount > outstanding + 1e-6) {
@@ -48,7 +68,9 @@ export class CollectionsService {
           where: { id: invoice.id },
           data: {
             paidAmount: newPaid,
-            status: fullyPaid ? InvoiceStatus.PAID : InvoiceStatus.PARTIALLY_PAID,
+            status: fullyPaid
+              ? InvoiceStatus.PAID
+              : InvoiceStatus.PARTIALLY_PAID,
           },
         });
       }
@@ -63,7 +85,9 @@ export class CollectionsService {
           bankAccountId: dto.bankAccountId,
           amount: dto.amount,
           currencyId,
-          collectionDate: dto.collectionDate ? new Date(dto.collectionDate) : undefined,
+          collectionDate: dto.collectionDate
+            ? new Date(dto.collectionDate)
+            : undefined,
           note: dto.note,
           createdByUserId: userId,
         },

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PurchaseInvoicesService } from './purchase-invoices.service';
 import { CreatePurchaseInvoiceDto } from './dto/purchase-invoice.dto';
@@ -30,14 +38,20 @@ export class PurchaseInvoicesController {
   @Get()
   @RequirePermissions({ resource: 'purchase_invoice', action: 'read' })
   @ApiOperation({ summary: 'List purchase invoices' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'purchase_invoice', action: 'read' })
   @ApiOperation({ summary: 'Get a purchase invoice by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.findOne(companyId, id);
   }
 
@@ -45,7 +59,10 @@ export class PurchaseInvoicesController {
   @RequirePermissions({ resource: 'purchase_invoice', action: 'approve' })
   @Audit('approve', 'PurchaseInvoice')
   @ApiOperation({ summary: 'Approve a purchase invoice' })
-  approve(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  approve(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.approve(companyId, id);
   }
 }

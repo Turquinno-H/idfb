@@ -10,7 +10,10 @@ export class LoginDto {
   @IsString()
   password!: string;
 
-  @ApiProperty({ required: false, description: 'Select a company when the account belongs to more than one.' })
+  @ApiProperty({
+    required: false,
+    description: 'Select a company when the account belongs to more than one.',
+  })
   @IsOptional()
   @IsUUID()
   companyId?: string;

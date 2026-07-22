@@ -26,8 +26,13 @@ export class AuthService {
     private readonly rbacService: RbacService,
   ) {}
 
-  async register(dto: RegisterDto, context: RequestContext): Promise<TokenPair> {
-    const existingUser = await this.prisma.user.findUnique({ where: { email: dto.email } });
+  async register(
+    dto: RegisterDto,
+    context: RequestContext,
+  ): Promise<TokenPair> {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
     if (existingUser) {
       throw new ConflictException('A user with this email already exists');
     }
@@ -36,10 +41,14 @@ export class AuthService {
       where: { taxNumber: dto.taxNumber },
     });
     if (existingCompany) {
-      throw new ConflictException('A company with this tax number already exists');
+      throw new ConflictException(
+        'A company with this tax number already exists',
+      );
     }
 
-    const baseCurrency = await this.prisma.currency.findUniqueOrThrow({ where: { code: 'TRY' } });
+    const baseCurrency = await this.prisma.currency.findUniqueOrThrow({
+      where: { code: 'TRY' },
+    });
     const passwordHash = await argon2.hash(dto.password);
 
     const result = await this.prisma.$transaction(async (tx) => {
@@ -64,26 +73,51 @@ export class AuthService {
       });
 
       const adminRole = await tx.role.create({
-        data: { companyId: company.id, name: 'Admin', description: 'Şirket yöneticisi', isSystem: true },
+        data: {
+          companyId: company.id,
+          name: 'Admin',
+          description: 'Şirket yöneticisi',
+          isSystem: true,
+        },
       });
 
       const allPermissions = await tx.permission.findMany();
       await tx.rolePermission.createMany({
-        data: allPermissions.map((permission) => ({ roleId: adminRole.id, permissionId: permission.id })),
+        data: allPermissions.map((permission) => ({
+          roleId: adminRole.id,
+          permissionId: permission.id,
+        })),
       });
 
       const member = await tx.companyMember.create({
-        data: { companyId: company.id, userId: user.id, status: 'ACTIVE', joinedAt: new Date() },
+        data: {
+          companyId: company.id,
+          userId: user.id,
+          status: 'ACTIVE',
+          joinedAt: new Date(),
+        },
       });
 
-      await tx.memberRole.create({ data: { companyMemberId: member.id, roleId: adminRole.id } });
+      await tx.memberRole.create({
+        data: { companyMemberId: member.id, roleId: adminRole.id },
+      });
 
       await tx.branch.create({
-        data: { companyId: company.id, code: 'MERKEZ', name: 'Merkez Şube', isMain: true },
+        data: {
+          companyId: company.id,
+          code: 'MERKEZ',
+          name: 'Merkez Şube',
+          isMain: true,
+        },
       });
 
       const warehouse = await tx.warehouse.create({
-        data: { companyId: company.id, code: 'ANA-DEPO', name: 'Ana Depo', type: 'MAIN' },
+        data: {
+          companyId: company.id,
+          code: 'ANA-DEPO',
+          name: 'Ana Depo',
+          type: 'MAIN',
+        },
       });
       void warehouse;
 
@@ -93,7 +127,10 @@ export class AuthService {
     return this.issueTokensForMember(result.user.id, result.member.id, context);
   }
 
-  async login(dto: LoginDto, context: RequestContext): Promise<TokenPair | { companies: { id: string; name: string }[] }> {
+  async login(
+    dto: LoginDto,
+    context: RequestContext,
+  ): Promise<TokenPair | { companies: { id: string; name: string }[] }> {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
       include: {
@@ -114,31 +151,56 @@ export class AuthService {
     }
 
     if (user.companyMembers.length === 0 && !user.isSuperAdmin) {
-      throw new ForbiddenException('This account is not linked to any active company');
+      throw new ForbiddenException(
+        'This account is not linked to any active company',
+      );
     }
 
     let member = user.companyMembers[0];
     if (dto.companyId) {
-      const requested = user.companyMembers.find((m) => m.companyId === dto.companyId);
+      const requested = user.companyMembers.find(
+        (m) => m.companyId === dto.companyId,
+      );
       if (!requested) {
-        throw new ForbiddenException('You are not a member of the requested company');
+        throw new ForbiddenException(
+          'You are not a member of the requested company',
+        );
       }
       member = requested;
     } else if (user.companyMembers.length > 1) {
       return {
-        companies: user.companyMembers.map((m) => ({ id: m.companyId, name: m.company.name })),
+        companies: user.companyMembers.map((m) => ({
+          id: m.companyId,
+          name: m.company.name,
+        })),
       };
     }
 
-    await this.prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
 
-    return this.issueTokensForMember(user.id, member?.id ?? null, context, user.isSuperAdmin);
+    return this.issueTokensForMember(
+      user.id,
+      member?.id ?? null,
+      context,
+      user.isSuperAdmin,
+    );
   }
 
-  async refresh(rawRefreshToken: string, context: RequestContext): Promise<TokenPair> {
-    const { userId, refreshToken } = await this.tokenService.rotateRefreshToken(rawRefreshToken, context);
+  async refresh(
+    rawRefreshToken: string,
+    context: RequestContext,
+  ): Promise<TokenPair> {
+    const { userId, refreshToken } = await this.tokenService.rotateRefreshToken(
+      rawRefreshToken,
+      context,
+    );
 
-    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
     const activeMember = await this.prisma.companyMember.findFirst({
       where: { userId, status: 'ACTIVE' },
       orderBy: { joinedAt: 'asc' },
@@ -162,12 +224,18 @@ export class AuthService {
     return { accessToken: token, refreshToken, expiresIn };
   }
 
-  async switchCompany(userId: string, companyId: string, context: RequestContext): Promise<TokenPair> {
+  async switchCompany(
+    userId: string,
+    companyId: string,
+    context: RequestContext,
+  ): Promise<TokenPair> {
     const member = await this.prisma.companyMember.findUnique({
       where: { companyId_userId: { companyId, userId } },
     });
     if (!member || member.status !== 'ACTIVE') {
-      throw new ForbiddenException('You are not an active member of this company');
+      throw new ForbiddenException(
+        'You are not an active member of this company',
+      );
     }
     return this.issueTokensForMember(userId, member.id, context);
   }
@@ -177,13 +245,18 @@ export class AuthService {
   }
 
   async changePassword(userId: string, dto: ChangePasswordDto): Promise<void> {
-    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
     const valid = await argon2.verify(user.passwordHash, dto.currentPassword);
     if (!valid) {
       throw new UnauthorizedException('Current password is incorrect');
     }
     const passwordHash = await argon2.hash(dto.newPassword);
-    await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash },
+    });
     await this.tokenService.revokeAllForUser(userId);
   }
 
@@ -193,12 +266,18 @@ export class AuthService {
     context: RequestContext,
     isSuperAdminOverride?: boolean,
   ): Promise<TokenPair> {
-    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
     const member = companyMemberId
-      ? await this.prisma.companyMember.findUniqueOrThrow({ where: { id: companyMemberId } })
+      ? await this.prisma.companyMember.findUniqueOrThrow({
+          where: { id: companyMemberId },
+        })
       : null;
 
-    const permissions = member ? await this.rbacService.getPermissionsForMember(member.id) : [];
+    const permissions = member
+      ? await this.rbacService.getPermissionsForMember(member.id)
+      : [];
 
     const payload: AccessTokenPayload = {
       sub: user.id,

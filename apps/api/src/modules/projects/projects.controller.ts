@@ -1,5 +1,20 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ProjectsService } from './projects.service';
 import {
   CreateProjectDto,
@@ -23,21 +38,30 @@ export class ProjectsController {
   @RequirePermissions({ resource: 'project', action: 'create' })
   @Audit('create', 'Project')
   @ApiOperation({ summary: 'Create a project' })
-  createProject(@TenantCompanyId() companyId: string, @Body() dto: CreateProjectDto) {
+  createProject(
+    @TenantCompanyId() companyId: string,
+    @Body() dto: CreateProjectDto,
+  ) {
     return this.service.createProject(companyId, dto);
   }
 
   @Get('projects')
   @RequirePermissions({ resource: 'project', action: 'read' })
   @ApiOperation({ summary: 'List projects' })
-  listProjects(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  listProjects(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.listProjects(companyId, query);
   }
 
   @Get('projects/:id')
   @RequirePermissions({ resource: 'project', action: 'read' })
   @ApiOperation({ summary: 'Get a project by id' })
-  getProject(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  getProject(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.getProject(companyId, id);
   }
 
@@ -57,7 +81,10 @@ export class ProjectsController {
   @RequirePermissions({ resource: 'project', action: 'delete' })
   @Audit('delete', 'Project')
   @ApiOperation({ summary: 'Delete a project' })
-  removeProject(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  removeProject(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.removeProject(companyId, id);
   }
 
@@ -98,7 +125,10 @@ export class ProjectsController {
   @RequirePermissions({ resource: 'task', action: 'delete' })
   @Audit('delete', 'Task')
   @ApiOperation({ summary: 'Delete a task' })
-  removeTask(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  removeTask(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.removeTask(companyId, id);
   }
 }

@@ -1,7 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 
 export interface AuditRecord {
   companyId?: string | null;
@@ -38,14 +42,18 @@ export class AuditService {
       });
     } catch (error) {
       // Audit persistence must never break the main request flow.
-      this.logger.error(`Failed to persist audit log: ${(error as Error).message}`);
+      this.logger.error(
+        `Failed to persist audit log: ${(error as Error).message}`,
+      );
     }
   }
 
   async findAll(
     companyId: string,
     query: PaginationQueryDto,
-  ): Promise<PaginatedResult<Prisma.AuditLogGetPayload<Record<string, never>>>> {
+  ): Promise<
+    PaginatedResult<Prisma.AuditLogGetPayload<Record<string, never>>>
+  > {
     const where: Prisma.AuditLogWhereInput = {
       companyId,
       ...(query.search

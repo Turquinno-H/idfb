@@ -19,7 +19,8 @@ async function bootstrap(): Promise<void> {
 
   app.use(
     helmet({
-      contentSecurityPolicy: appConfig.nodeEnv === 'production' ? undefined : false,
+      contentSecurityPolicy:
+        appConfig.nodeEnv === 'production' ? undefined : false,
       crossOriginEmbedderPolicy: false,
     }),
   );

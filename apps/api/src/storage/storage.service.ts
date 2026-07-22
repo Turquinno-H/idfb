@@ -49,12 +49,20 @@ export class StorageService implements OnModuleInit {
     mimeType: string,
     companyId: string,
   ): Promise<UploadResult> {
-    const extension = originalName.includes('.') ? originalName.split('.').pop() : undefined;
+    const extension = originalName.includes('.')
+      ? originalName.split('.').pop()
+      : undefined;
     const storageKey = `${companyId}/${randomUUID()}${extension ? `.${extension}` : ''}`;
 
-    await this.client.putObject(this.bucket, storageKey, buffer, buffer.length, {
-      'Content-Type': mimeType,
-    });
+    await this.client.putObject(
+      this.bucket,
+      storageKey,
+      buffer,
+      buffer.length,
+      {
+        'Content-Type': mimeType,
+      },
+    );
 
     return {
       storageKey,
@@ -64,8 +72,15 @@ export class StorageService implements OnModuleInit {
     };
   }
 
-  async getPresignedDownloadUrl(storageKey: string, expirySeconds = 3600): Promise<string> {
-    return this.client.presignedGetObject(this.bucket, storageKey, expirySeconds);
+  async getPresignedDownloadUrl(
+    storageKey: string,
+    expirySeconds = 3600,
+  ): Promise<string> {
+    return this.client.presignedGetObject(
+      this.bucket,
+      storageKey,
+      expirySeconds,
+    );
   }
 
   async remove(storageKey: string): Promise<void> {

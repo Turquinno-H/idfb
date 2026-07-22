@@ -21,7 +21,9 @@ export class RbacService {
     const permissions = new Set<string>();
     for (const memberRole of memberRoles) {
       for (const rolePermission of memberRole.role.rolePermissions) {
-        permissions.add(`${rolePermission.permission.resource}:${rolePermission.permission.action}`);
+        permissions.add(
+          `${rolePermission.permission.resource}:${rolePermission.permission.action}`,
+        );
       }
     }
     return Array.from(permissions);

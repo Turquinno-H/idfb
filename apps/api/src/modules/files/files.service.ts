@@ -3,7 +3,11 @@ import { createHash } from 'node:crypto';
 import { Prisma } from '@idfb/database';
 import { PrismaService } from '../../prisma/prisma.service';
 import { StorageService } from '../../storage/storage.service';
-import { PaginationQueryDto, paginate, PaginatedResult } from '../../common/dto/pagination.dto';
+import {
+  PaginationQueryDto,
+  paginate,
+  PaginatedResult,
+} from '../../common/dto/pagination.dto';
 
 type AttachmentEntity = Prisma.AttachmentGetPayload<Record<string, never>>;
 
@@ -24,7 +28,10 @@ export class FilesService {
     private readonly storage: StorageService,
   ) {}
 
-  async upload(companyId: string, input: UploadFileInput): Promise<AttachmentEntity> {
+  async upload(
+    companyId: string,
+    input: UploadFileInput,
+  ): Promise<AttachmentEntity> {
     const result = await this.storage.upload(
       input.buffer,
       input.originalName,
@@ -74,17 +81,26 @@ export class FilesService {
     return paginate(data, total, query.page, query.limit);
   }
 
-  async getDownloadUrl(companyId: string, id: string): Promise<{ url: string; originalName: string }> {
-    const attachment = await this.prisma.attachment.findFirst({ where: { id, companyId } });
+  async getDownloadUrl(
+    companyId: string,
+    id: string,
+  ): Promise<{ url: string; originalName: string }> {
+    const attachment = await this.prisma.attachment.findFirst({
+      where: { id, companyId },
+    });
     if (!attachment) {
       throw new NotFoundException('Attachment not found');
     }
-    const url = await this.storage.getPresignedDownloadUrl(attachment.storageKey);
+    const url = await this.storage.getPresignedDownloadUrl(
+      attachment.storageKey,
+    );
     return { url, originalName: attachment.originalName };
   }
 
   async remove(companyId: string, id: string): Promise<{ success: true }> {
-    const attachment = await this.prisma.attachment.findFirst({ where: { id, companyId } });
+    const attachment = await this.prisma.attachment.findFirst({
+      where: { id, companyId },
+    });
     if (!attachment) {
       throw new NotFoundException('Attachment not found');
     }

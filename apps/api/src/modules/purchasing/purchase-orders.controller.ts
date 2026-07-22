@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PurchaseOrdersService } from './purchase-orders.service';
 import {
@@ -34,14 +43,20 @@ export class PurchaseOrdersController {
   @Get()
   @RequirePermissions({ resource: 'purchase_order', action: 'read' })
   @ApiOperation({ summary: 'List purchase orders' })
-  findAll(@TenantCompanyId() companyId: string, @Query() query: PaginationQueryDto) {
+  findAll(
+    @TenantCompanyId() companyId: string,
+    @Query() query: PaginationQueryDto,
+  ) {
     return this.service.findAll(companyId, query);
   }
 
   @Get(':id')
   @RequirePermissions({ resource: 'purchase_order', action: 'read' })
   @ApiOperation({ summary: 'Get a purchase order by id' })
-  findOne(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.findOne(companyId, id);
   }
 
@@ -61,14 +76,19 @@ export class PurchaseOrdersController {
   @RequirePermissions({ resource: 'purchase_order', action: 'approve' })
   @Audit('confirm', 'PurchaseOrder')
   @ApiOperation({ summary: 'Confirm a draft purchase order' })
-  confirm(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  confirm(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.confirm(companyId, id);
   }
 
   @Post(':id/receive')
   @RequirePermissions({ resource: 'purchase_receipt', action: 'create' })
   @Audit('receive', 'PurchaseOrder')
-  @ApiOperation({ summary: 'Receive goods against a purchase order (posts stock in)' })
+  @ApiOperation({
+    summary: 'Receive goods against a purchase order (posts stock in)',
+  })
   receive(
     @TenantCompanyId() companyId: string,
     @CurrentUser() user: AuthenticatedUser,
@@ -82,7 +102,10 @@ export class PurchaseOrdersController {
   @RequirePermissions({ resource: 'purchase_order', action: 'update' })
   @Audit('cancel', 'PurchaseOrder')
   @ApiOperation({ summary: 'Cancel a purchase order' })
-  cancel(@TenantCompanyId() companyId: string, @Param('id', ParseUUIDPipe) id: string) {
+  cancel(
+    @TenantCompanyId() companyId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.service.cancel(companyId, id);
   }
 }

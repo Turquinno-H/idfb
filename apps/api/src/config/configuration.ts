@@ -41,12 +41,17 @@ export default (): { app: AppConfig } => ({
     nodeEnv: process.env.NODE_ENV ?? 'development',
     port: parseInt(process.env.PORT ?? '3001', 10),
     apiPrefix: process.env.API_PREFIX ?? 'api',
-    corsOrigins: (process.env.CORS_ORIGINS ?? 'http://localhost:3000').split(','),
+    corsOrigins: (process.env.CORS_ORIGINS ?? 'http://localhost:3000').split(
+      ',',
+    ),
     jwt: {
       accessSecret: process.env.JWT_ACCESS_SECRET as string,
       accessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN ?? '15m',
       refreshSecret: process.env.JWT_REFRESH_SECRET as string,
-      refreshExpiresInDays: parseInt(process.env.JWT_REFRESH_EXPIRES_IN_DAYS ?? '30', 10),
+      refreshExpiresInDays: parseInt(
+        process.env.JWT_REFRESH_EXPIRES_IN_DAYS ?? '30',
+        10,
+      ),
     },
     redis: {
       host: process.env.REDIS_HOST ?? 'localhost',

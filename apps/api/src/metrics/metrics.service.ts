@@ -9,7 +9,10 @@ export class MetricsService {
 
   constructor() {
     this.registry = new client.Registry();
-    client.collectDefaultMetrics({ register: this.registry, prefix: 'idfb_erp_' });
+    client.collectDefaultMetrics({
+      register: this.registry,
+      prefix: 'idfb_erp_',
+    });
 
     this.httpRequestDuration = new client.Histogram({
       name: 'idfb_erp_http_request_duration_seconds',
