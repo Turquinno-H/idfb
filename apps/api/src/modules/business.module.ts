@@ -25,6 +25,11 @@ import { ProjectsModule } from './projects/projects.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { SettingsModule } from './settings/settings.module';
 import { RolesModule } from './roles/roles.module';
+import { FilesModule } from './files/files.module';
+import { BarcodeModule } from './barcode/barcode.module';
+import { PosModule } from './pos/pos.module';
+import { EDocumentsModule } from './e-documents/e-documents.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -58,6 +63,11 @@ import { RolesModule } from './roles/roles.module';
     NotificationsModule,
     SettingsModule,
     RolesModule,
+    FilesModule,
+    BarcodeModule,
+    PosModule,
+    EDocumentsModule,
+    DashboardModule,
   ],
 })
 export class BusinessModule {}

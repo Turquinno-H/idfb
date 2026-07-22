@@ -53,7 +53,7 @@ async function bootstrap(): Promise<void> {
     .addTag('auth', 'Authentication & session management')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup(`${appConfig.apiPrefix}/docs`, app, document, {
+  SwaggerModule.setup(`${appConfig.apiPrefix}/v1/docs`, app, document, {
     swaggerOptions: { persistAuthorization: true },
   });
 
