@@ -7,13 +7,13 @@
 databases:
   - name: idfb-postgres
     databaseName: idfb_erp
-    plan: basic-256mb
+    plan: free
 
 services:
   # Redis / Key-Value store
   - type: keyvalue
     name: idfb-redis
-    plan: standard
+    plan: free
     ipAllowList: []
     maxmemoryPolicy: noeviction
 
@@ -23,7 +23,7 @@ services:
     runtime: docker
     dockerfilePath: apps/api/Dockerfile
     dockerContext: .
-    plan: starter
+    plan: free
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -60,7 +60,7 @@ services:
     runtime: docker
     dockerfilePath: apps/web/Dockerfile
     dockerContext: .
-    plan: starter
+    plan: free
     envVars:
       - key: NODE_ENV
         value: production
