@@ -20,15 +20,14 @@ COPY packages ./packages
 COPY apps/api ./apps/api
 RUN pnpm --filter @idfb/database exec prisma generate
 RUN pnpm --filter @idfb/api build
-RUN pnpm --filter @idfb/api --prod deploy /app/deploy
 
 # ---- Runtime ----
-FROM base AS runtime
+# Reuses the build stage so the Prisma CLI, migrations and seed runner are
+# available for the startup entrypoint (migrate + seed) on any host.
+FROM build AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
-COPY --from=build /app/deploy/node_modules ./node_modules
-COPY --from=build /app/apps/api/dist ./dist
-COPY --from=build /app/packages/database/generated ./node_modules/@idfb/database/generated
-COPY --from=build /app/packages/database/prisma ./prisma
+COPY apps/api/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 EXPOSE 3001
-CMD ["node", "dist/main.js"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

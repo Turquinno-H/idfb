@@ -40,6 +40,21 @@ income) · Accounting (chart of accounts, double-entry journal, trial balance) �
 HR (employees, Turkish statutory payroll, attendance) · Projects & tasks · POS ·
 e-Fatura / e-Arşiv / e-İrsaliye · Files · Notifications · Audit logs · Dashboard.
 
+## One-Click Deploy (Render)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Turquinno-H/idfb)
+
+Clicking the button reads `render.yaml` and provisions the API, PostgreSQL,
+Redis/Key-Value and the web frontend on Render's free tier. After the first
+deploy, set two env vars (Render URLs are predictable):
+
+- **idfb-api** → `CORS_ORIGINS` = `https://idfb-web.onrender.com`
+- **idfb-web** → `NEXT_PUBLIC_API_URL` = `https://idfb-api.onrender.com/api/v1`
+
+then trigger a manual redeploy of `idfb-web`. Public app: `https://idfb-web.onrender.com`.
+Free-tier services sleep after inactivity (first request after idle takes ~30s),
+and free PostgreSQL expires after 30 days.
+
 ## Getting Started
 
 ### With Docker (recommended)

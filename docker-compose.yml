@@ -59,6 +59,9 @@ services:
       - '1025:1025'
       - '8025:8025'
 
+  # The API applies migrations and seeds base data on startup via its
+  # entrypoint (see apps/api/docker-entrypoint.sh), so a fresh
+  # `docker compose up` works on the first try.
   api:
     build:
       context: .
