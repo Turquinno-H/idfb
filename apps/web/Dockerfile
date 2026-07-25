@@ -27,6 +27,11 @@ RUN pnpm --filter @idfb/web build
 FROM base AS runtime
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# Bind to all interfaces so the platform proxy can reach the app. Without this
+# the Next.js standalone server picks up Docker's auto HOSTNAME (the container
+# id) and binds to the wrong address, causing 502s on Render/Fly/etc.
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
 WORKDIR /app
 COPY --from=build /app/apps/web/.next/standalone ./
 COPY --from=build /app/apps/web/.next/static ./apps/web/.next/static
