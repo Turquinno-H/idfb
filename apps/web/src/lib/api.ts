@@ -1,7 +1,10 @@
 import type { TokenPair } from './types';
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api/v1';
+// Defaults to the same-origin proxy route (apps/web/src/app/api/v1/[...path]),
+// which forwards to the backend named by API_PROXY_TARGET at runtime. Set
+// NEXT_PUBLIC_API_URL only to make the browser call the API directly, in which
+// case the API must allow this origin through CORS.
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api/v1';
 
 const ACCESS_TOKEN_KEY = 'idfb.accessToken';
 const REFRESH_TOKEN_KEY = 'idfb.refreshToken';

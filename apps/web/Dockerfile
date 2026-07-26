@@ -16,7 +16,9 @@ RUN pnpm install --frozen-lockfile
 
 # ---- Build ----
 FROM deps AS build
-ARG NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
+# Left unset on purpose: the client falls back to the same-origin /api/v1
+# proxy route, whose backend (API_PROXY_TARGET) is resolved at runtime.
+ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY packages ./packages

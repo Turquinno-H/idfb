@@ -1,6 +1,11 @@
+import * as argon2 from 'argon2';
 import { PrismaClient } from '../generated/client';
 
 const prisma = new PrismaClient();
+
+const DEMO_COMPANY_TAX_NUMBER = '1234567890';
+const DEMO_USER_EMAIL = process.env.SEED_DEMO_EMAIL ?? 'demo@idfb.app';
+const DEMO_USER_PASSWORD = process.env.SEED_DEMO_PASSWORD ?? 'Demo1234';
 
 const PERMISSION_RESOURCES = [
   'company',
@@ -100,12 +105,12 @@ async function seedDemoCompany() {
   const tryCurrency = await prisma.currency.findUniqueOrThrow({ where: { code: 'TRY' } });
 
   const company = await prisma.company.upsert({
-    where: { taxNumber: '1234567890' },
+    where: { taxNumber: DEMO_COMPANY_TAX_NUMBER },
     update: {},
     create: {
       name: 'Demo Ticaret A.Ş.',
       legalName: 'Demo Ticaret Anonim Şirketi',
-      taxNumber: '1234567890',
+      taxNumber: DEMO_COMPANY_TAX_NUMBER,
       taxOffice: 'Kadıköy',
       city: 'İstanbul',
       country: 'Türkiye',
@@ -180,10 +185,58 @@ async function seedDemoCompany() {
   }
 }
 
+async function seedDemoUser() {
+  const company = await prisma.company.findUniqueOrThrow({
+    where: { taxNumber: DEMO_COMPANY_TAX_NUMBER },
+  });
+  const adminRole = await prisma.role.findUniqueOrThrow({
+    where: { companyId_name: { companyId: company.id, name: 'Admin' } },
+  });
+
+  // The hash is written on creation only, so a password changed from inside
+  // the application survives every later seed run.
+  const user = await prisma.user.upsert({
+    where: { email: DEMO_USER_EMAIL },
+    update: {},
+    create: {
+      email: DEMO_USER_EMAIL,
+      passwordHash: await argon2.hash(DEMO_USER_PASSWORD),
+      firstName: 'Demo',
+      lastName: 'Yönetici',
+      locale: 'tr',
+    },
+  });
+
+  const member = await prisma.companyMember.upsert({
+    where: { companyId_userId: { companyId: company.id, userId: user.id } },
+    update: { status: 'ACTIVE' },
+    create: {
+      companyId: company.id,
+      userId: user.id,
+      status: 'ACTIVE',
+      joinedAt: new Date(),
+    },
+  });
+
+  await prisma.memberRole.upsert({
+    where: {
+      companyMemberId_roleId: {
+        companyMemberId: member.id,
+        roleId: adminRole.id,
+      },
+    },
+    update: {},
+    create: { companyMemberId: member.id, roleId: adminRole.id },
+  });
+
+  console.log(`[seed] demo admin ready: ${DEMO_USER_EMAIL}`);
+}
+
 async function main() {
   await seedCurrencies();
   await seedPermissions();
   await seedDemoCompany();
+  await seedDemoUser();
 }
 
 main()
