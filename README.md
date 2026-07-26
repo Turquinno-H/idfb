@@ -45,15 +45,36 @@ e-Fatura / e-Arşiv / e-İrsaliye · Files · Notifications · Audit logs · Das
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Turquinno-H/idfb)
 
 Clicking the button reads `render.yaml` and provisions the API, PostgreSQL,
-Redis/Key-Value and the web frontend on Render's free tier. After the first
-deploy, set two env vars (Render URLs are predictable):
+Redis/Key-Value and the web frontend on Render's free tier. Every environment
+variable is wired by the blueprint, so no post-deploy configuration is needed.
+Public app: `https://idfb-web.onrender.com`.
 
-- **idfb-api** → `CORS_ORIGINS` = `https://idfb-web.onrender.com`
-- **idfb-web** → `NEXT_PUBLIC_API_URL` = `https://idfb-api.onrender.com/api/v1`
-
-then trigger a manual redeploy of `idfb-web`. Public app: `https://idfb-web.onrender.com`.
 Free-tier services sleep after inactivity (first request after idle takes ~30s),
 and free PostgreSQL expires after 30 days.
+
+### Demo login
+
+The seed provisions an administrator of the demo company on first boot:
+
+| E-mail | Password |
+| --- | --- |
+| `demo@idfb.app` | `Demo1234` |
+
+Override with `SEED_DEMO_EMAIL` / `SEED_DEMO_PASSWORD`, and change the password
+from **Ayarlar** after the first login — the hash is written only when the
+account is created, so later seed runs never reset it. Anyone can also register
+their own company from the **Kayıt Ol** screen; the tax number must be 10–11
+digits and unique, and the password needs at least 8 characters with an
+upper-case letter, a lower-case letter and a digit.
+
+### How the frontend reaches the API
+
+The browser calls `/api/v1/...` on the web app's own origin, and the route
+handler at `apps/web/src/app/api/v1/[...path]` forwards it to
+`API_PROXY_TARGET` (default `http://localhost:3001`). That target is read per
+request, so pointing a prebuilt image at a different backend takes a restart
+rather than a rebuild, and no CORS grant is involved. Set `NEXT_PUBLIC_API_URL`
+at build time instead if you want the browser to call the API directly.
 
 ## Getting Started
 

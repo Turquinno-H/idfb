@@ -50,9 +50,16 @@ services:
         generateValue: true
       - key: JWT_REFRESH_SECRET
         generateValue: true
-      # Set to the deployed web URL after the first deploy (CORS).
+      # The web frontend proxies through its own origin, so CORS is only
+      # relevant for callers hitting the API directly.
       - key: CORS_ORIGINS
-        sync: false
+        value: https://idfb-web.onrender.com
+      # Demo administrator provisioned by the seed on first boot.
+      # Change the password from inside the app after the first login.
+      - key: SEED_DEMO_EMAIL
+        value: demo@idfb.app
+      - key: SEED_DEMO_PASSWORD
+        value: Demo1234
 
   # Frontend (Docker, Next.js standalone)
   - type: web
@@ -66,7 +73,7 @@ services:
         value: production
       - key: PORT
         value: '3000'
-      # Build-time public API URL — set to the API service URL, e.g.
-      # https://idfb-api.onrender.com/api/v1
-      - key: NEXT_PUBLIC_API_URL
-        sync: false
+      # Backend the same-origin /api/v1 proxy forwards to. Read at request
+      # time, so changing it needs a restart but never a rebuild.
+      - key: API_PROXY_TARGET
+        value: https://idfb-api.onrender.com
