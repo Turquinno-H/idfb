@@ -4,7 +4,28 @@ import type { TokenPair } from './types';
 // which forwards to the backend named by API_PROXY_TARGET at runtime. Set
 // NEXT_PUBLIC_API_URL only to make the browser call the API directly, in which
 // case the API must allow this origin through CORS.
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api/v1';
+const CONFIGURED_API_URL = process.env.NEXT_PUBLIC_API_URL;
+const SAME_ORIGIN_API_URL = '/api/v1';
+
+function isLoopback(hostname: string): boolean {
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]';
+}
+
+function apiBaseUrl(): string {
+  if (CONFIGURED_API_URL === undefined || CONFIGURED_API_URL === '') {
+    return SAME_ORIGIN_API_URL;
+  }
+  // A loopback API address baked into a bundle that is served from a real
+  // domain can only ever reach the visitor's own machine, so prefer the
+  // same-origin proxy over a request that is guaranteed to fail.
+  if (typeof window !== 'undefined') {
+    const { hostname: apiHost } = new URL(CONFIGURED_API_URL, window.location.href);
+    if (isLoopback(apiHost) && !isLoopback(window.location.hostname)) {
+      return SAME_ORIGIN_API_URL;
+    }
+  }
+  return CONFIGURED_API_URL;
+}
 
 const ACCESS_TOKEN_KEY = 'idfb.accessToken';
 const REFRESH_TOKEN_KEY = 'idfb.refreshToken';
@@ -56,7 +77,7 @@ async function attemptRefresh(): Promise<boolean> {
   if (!refreshPromise) {
     refreshPromise = (async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        const response = await fetch(`${apiBaseUrl()}/auth/refresh`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refreshToken }),
@@ -97,7 +118,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   };
 
   const doFetch = (): Promise<Response> =>
-    fetch(`${API_BASE_URL}${path}`, {
+    fetch(`${apiBaseUrl()}${path}`, {
       ...rest,
       headers: buildHeaders(),
       body: isFormData
@@ -156,4 +177,4 @@ export const api = {
     request<T>(path, { ...options, method: 'DELETE' }),
 };
 
-export { API_BASE_URL };
+export { apiBaseUrl };

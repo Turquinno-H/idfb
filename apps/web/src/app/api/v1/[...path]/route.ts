@@ -7,9 +7,27 @@ import type { NextRequest } from 'next/server';
 // NEXT_PUBLIC_API_URL which Next.js inlines into the client bundle at build
 // time — so a prebuilt image can be pointed at any backend by changing an
 // environment variable, and no CORS grant is ever required.
-const API_TARGET = (
-  process.env.API_PROXY_TARGET ?? 'http://localhost:3001'
-).replace(/\/+$/, '');
+
+// Render's blueprint deploys the API as `<prefix>-api` next to the frontend's
+// `<prefix>-web`. Deriving the sibling from the incoming Host keeps a
+// deployment whose API_PROXY_TARGET was never set from falling back to the
+// local development port, which on a hosted origin resolves to the visitor's
+// own machine and fails every request.
+function inferRenderSibling(host: string | null): string | null {
+  if (host === null) {
+    return null;
+  }
+  const match = /^(.+)-web\.onrender\.com$/.exec(host.split(':')[0]);
+  return match === null ? null : `https://${match[1]}-api.onrender.com`;
+}
+
+function resolveApiTarget(request: NextRequest): string {
+  const target =
+    process.env.API_PROXY_TARGET ??
+    inferRenderSibling(request.headers.get('host')) ??
+    'http://localhost:3001';
+  return target.replace(/\/+$/, '');
+}
 
 // Headers that describe a single transport hop and must not be relayed.
 const HOP_BY_HOP_HEADERS = new Set([
@@ -41,7 +59,7 @@ async function proxy(
   context: { params: Promise<{ path: string[] }> },
 ): Promise<Response> {
   const { path } = await context.params;
-  const target = `${API_TARGET}/api/v1/${path
+  const target = `${resolveApiTarget(request)}/api/v1/${path
     .map((segment) => encodeURIComponent(segment))
     .join('/')}${request.nextUrl.search}`;
 

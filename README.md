@@ -70,11 +70,21 @@ upper-case letter, a lower-case letter and a digit.
 ### How the frontend reaches the API
 
 The browser calls `/api/v1/...` on the web app's own origin, and the route
-handler at `apps/web/src/app/api/v1/[...path]` forwards it to
-`API_PROXY_TARGET` (default `http://localhost:3001`). That target is read per
-request, so pointing a prebuilt image at a different backend takes a restart
-rather than a rebuild, and no CORS grant is involved. Set `NEXT_PUBLIC_API_URL`
-at build time instead if you want the browser to call the API directly.
+handler at `apps/web/src/app/api/v1/[...path]` forwards it to the backend. That
+target is read per request, so pointing a prebuilt image at a different backend
+takes a restart rather than a rebuild, and no CORS grant is involved. It
+resolves in order:
+
+1. `API_PROXY_TARGET`, when set.
+2. The Render sibling service — a request arriving at `<prefix>-web.onrender.com`
+   is forwarded to `https://<prefix>-api.onrender.com`, matching how the
+   blueprint names the two services.
+3. `http://localhost:3001` for local development.
+
+Set `NEXT_PUBLIC_API_URL` at build time instead if you want the browser to call
+the API directly; the API must then list the frontend origin in `CORS_ORIGINS`.
+A loopback value is ignored when the page is served from a non-loopback host,
+since it could only ever reach the visitor's own machine.
 
 ## Getting Started
 
