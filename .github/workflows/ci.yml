@@ -71,6 +71,12 @@ jobs:
       - name: Apply migrations
         run: pnpm --filter @idfb/database exec prisma migrate deploy
 
+      # Registration resolves TRY as the new company's base currency, so the
+      # e2e suite needs the reference data the production entrypoint seeds on
+      # boot: currencies, the permission catalogue and the system roles.
+      - name: Seed reference data
+        run: pnpm --filter @idfb/database exec prisma db seed
+
       - name: Lint
         run: pnpm lint
 
