@@ -80,25 +80,25 @@ async function seedCurrencies() {
     { code: 'EUR', name: 'Euro', symbol: '€', decimalPlaces: 2 },
     { code: 'GBP', name: 'British Pound', symbol: '£', decimalPlaces: 2 },
   ];
-  for (const currency of currencies) {
-    await prisma.currency.upsert({
-      where: { code: currency.code },
-      update: {},
-      create: currency,
-    });
-  }
+  await prisma.currency.createMany({ data: currencies, skipDuplicates: true });
 }
 
 async function seedPermissions() {
-  for (const resource of PERMISSION_RESOURCES) {
-    for (const action of PERMISSION_ACTIONS) {
-      await prisma.permission.upsert({
-        where: { resource_action: { resource, action } },
-        update: {},
-        create: { resource, action, description: `${action} ${resource}` },
-      });
-    }
-  }
+  // One statement rather than 252 sequential upserts. The entrypoint re-runs
+  // the seed on every container start, so each round trip here is paid again
+  // on every restart — and the API does not begin listening until it ends.
+  // skipDuplicates keeps it idempotent while still inserting resources or
+  // actions added since the last run.
+  await prisma.permission.createMany({
+    data: PERMISSION_RESOURCES.flatMap((resource) =>
+      PERMISSION_ACTIONS.map((action) => ({
+        resource,
+        action,
+        description: `${action} ${resource}`,
+      })),
+    ),
+    skipDuplicates: true,
+  });
 }
 
 async function seedDemoCompany() {
@@ -139,13 +139,13 @@ async function seedDemoCompany() {
         ? allPermissions
         : allPermissions.filter((p) => (scope as string[]).includes(p.resource));
 
-    for (const permission of permissionsForRole) {
-      await prisma.rolePermission.upsert({
-        where: { roleId_permissionId: { roleId: role.id, permissionId: permission.id } },
-        update: {},
-        create: { roleId: role.id, permissionId: permission.id },
-      });
-    }
+    await prisma.rolePermission.createMany({
+      data: permissionsForRole.map((permission) => ({
+        roleId: role.id,
+        permissionId: permission.id,
+      })),
+      skipDuplicates: true,
+    });
   }
 
   await prisma.branch.upsert({
