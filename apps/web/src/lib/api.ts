@@ -117,8 +117,10 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     return { ...base, ...(headers as Record<string, string>) };
   };
 
-  const doFetch = (): Promise<Response> =>
-    fetch(`${apiBaseUrl()}${path}`, {
+  const base = apiBaseUrl();
+
+  const send = (target: string): Promise<Response> =>
+    fetch(`${target}${path}`, {
       ...rest,
       headers: buildHeaders(),
       body: isFormData
@@ -127,6 +129,32 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
           ? JSON.stringify(body)
           : undefined,
     });
+
+  const doFetch = async (): Promise<Response> => {
+    try {
+      return await send(base);
+    } catch (cause) {
+      // fetch only rejects when no response ever arrived: DNS, TLS, a refused
+      // connection, or a cross-origin request the API declined. A bundle
+      // built against an absolute API URL that the visitor's browser cannot
+      // reach still has the same-origin proxy available, so try that once
+      // before failing.
+      if (base !== SAME_ORIGIN_API_URL) {
+        try {
+          return await send(SAME_ORIGIN_API_URL);
+        } catch {
+          // Report the original failure rather than the fallback's.
+        }
+      }
+      // Naming the address that was tried turns a bare "request failed" into
+      // something diagnosable from the screen alone.
+      throw new ApiError(
+        0,
+        `API sunucusuna ulaşılamadı (${base}${path}). Sunucu uyku modundan çıkıyor olabilir; birkaç saniye sonra tekrar deneyin.`,
+        cause,
+      );
+    }
+  };
 
   let response = await doFetch();
 

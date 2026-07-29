@@ -50,9 +50,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The version comes from the root package.json "packageManager" field.
+      # Passing it here as well makes the action abort on a version conflict.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - uses: actions/setup-node@v4
         with:
@@ -70,6 +70,12 @@ jobs:
 
       - name: Apply migrations
         run: pnpm --filter @idfb/database exec prisma migrate deploy
+
+      # Registration resolves TRY as the new company's base currency, so the
+      # e2e suite needs the reference data the production entrypoint seeds on
+      # boot: currencies, the permission catalogue and the system roles.
+      - name: Seed reference data
+        run: pnpm --filter @idfb/database exec prisma db seed
 
       - name: Lint
         run: pnpm lint
