@@ -87,6 +87,21 @@ async function proxy(
     );
   }
 
+  // A platform-level failure — the API service crash-looping, restarting or
+  // still waking up — comes back as an HTML error page, which the client can
+  // only report as a bare status code. Naming the upstream makes the cause
+  // readable from the screen instead of requiring the service logs.
+  const contentType = upstream.headers.get('content-type') ?? '';
+  if (upstream.status >= 500 && !contentType.includes('application/json')) {
+    return Response.json(
+      {
+        statusCode: upstream.status,
+        message: `API sunucusu yanıt vermiyor (${new URL(target).host} → ${upstream.status}). Servis yeniden başlıyor olabilir, birkaç dakika sonra tekrar deneyin.`,
+      },
+      { status: upstream.status },
+    );
+  }
+
   return new Response(upstream.body, {
     status: upstream.status,
     statusText: upstream.statusText,
