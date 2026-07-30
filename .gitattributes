@@ -1,0 +1,6 @@
+# Git on Windows checks text files out with CRLF by default. The container
+# entrypoint is copied straight into a Linux image, where CRLF makes it
+# unrunnable (`/bin/sh^M: bad interpreter`) and kills the API container on
+# startup. Pin the working tree to LF on every platform so a clone behaves the
+# same wherever `docker compose up` is run.
+* text=auto eol=lf
